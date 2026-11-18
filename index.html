@@ -312,6 +312,23 @@
   .wcard .sig small{ display:block; font:500 italic 13px/1.3 var(--serif); color:#7a6040; margin-top:4px; }
   #again{ margin-top:14px; font:500 12px/1 var(--sans); letter-spacing:.2em; text-transform:uppercase; color:#f7e4a6; padding:10px 14px; }
 
+  /* ---------- in-app browser (Instagram etc.) ---------- */
+  #escape{ position:absolute; inset:0; z-index:30; display:grid; place-items:center; padding:calc(30px + var(--top)) 28px calc(30px + var(--bot));
+    background:radial-gradient(120% 80% at 50% 40%, #1a2552, #0b1230 70%); text-align:center; }
+  #escape[hidden]{ display:none; }
+  .ebox{ display:flex; flex-direction:column; align-items:center; max-width:330px; }
+  .ebox svg{ width:66px; margin-bottom:16px; filter:drop-shadow(0 4px 14px rgba(227,192,106,.4)); }
+  .e1{ font:400 13px/1.3 var(--fell); letter-spacing:.28em; text-transform:uppercase; color:var(--gold); }
+  .e2{ font:600 22px/1.4 var(--serif); color:var(--text); margin-top:12px; text-wrap:balance; }
+  .ebtn{ margin-top:26px; font:600 14px/1 var(--sans); letter-spacing:.16em; text-transform:uppercase; color:#2a1706; text-decoration:none; white-space:nowrap;
+    padding:15px 30px; border-radius:99px; background:linear-gradient(180deg,#ffe29a,#e2a940);
+    box-shadow:0 8px 26px rgba(226,169,64,.35), inset 0 1px 0 rgba(255,255,255,.6); animation:eglow 1.8s ease-in-out infinite; }
+  @keyframes eglow{ 50%{ transform:translateY(-3px); box-shadow:0 12px 32px rgba(226,169,64,.55), inset 0 1px 0 rgba(255,255,255,.6); } }
+  .e3{ font:400 13px/1.5 var(--sans); color:var(--muted); margin-top:18px; text-wrap:balance; }
+  .e3 b{ color:var(--gold2); font-weight:600; }
+  #eStay{ margin-top:20px; font:500 12px/1 var(--sans); letter-spacing:.18em; text-transform:uppercase; color:#aab2d0; padding:10px 14px;
+    text-decoration:underline; text-underline-offset:4px; }
+
   @media (max-height:640px){
     .scene{ --pb:80px; padding-top:calc(42px + var(--top)); }
     .head h2{ font-size:24px; margin-top:6px; } .ins{ font-size:13px; margin-top:6px; }
@@ -570,6 +587,17 @@
   <button id="back" aria-label="Previous chapter">‹</button>
   <button id="next">Next ›</button>
   <div id="curtain"><i></i><i></i></div>
+
+  <div id="escape" hidden>
+    <div class="ebox">
+      <svg viewBox="0 0 120 92"><use href="#crownS"/></svg>
+      <p class="e1">One moment, Your Highness</p>
+      <p class="e2">The palace is best visited in <span id="eWhere">your browser</span>, with sound on.</p>
+      <a class="ebtn" id="eOut" href="#">Open in browser ›</a>
+      <p class="e3" id="eIos">If nothing happens, tap <b>•••</b> at the top right, then <b>Open in external browser</b>.</p>
+      <button id="eStay" type="button">Continue here instead</button>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -580,6 +608,22 @@
   const wait = (ms) => new Promise((r) => setTimeout(r, ms));
   const rnd = (a, b) => a + Math.random() * (b - a);
   const MUTE = /[?&]mute\b/.test(location.search);
+
+  /* ============================================================ in-app browsers → the real browser */
+  const UA = navigator.userAgent, ANDROID = /Android/i.test(UA);
+  const IN_APP = /Instagram|FBAN|FBAV|FB_IAB|Line\/|Snapchat|Twitter/i.test(UA) && !/[?&]stay\b/.test(location.search);
+  if (IN_APP){
+    const here = location.host + location.pathname, out = $("#eOut");
+    out.href = ANDROID
+      ? `intent://${here}#Intent;scheme=https;package=com.android.chrome;S.browser_fallback_url=${encodeURIComponent(`https://${here}?stay`)};end`
+      : `x-safari-https://${here}`;
+    out.textContent = ANDROID ? "Open in Chrome ›" : "Open in Safari ›";
+    $("#eWhere").textContent = ANDROID ? "Chrome" : "Safari";
+    $("#eIos").hidden = ANDROID;
+    $("#escape").hidden = false;
+    $("#eStay").addEventListener("click", () => { $("#escape").hidden = true; beginIntro(); prepMusic(); });
+    setTimeout(() => out.click(), 250);
+  }
 
   /* ============================================================ sky: stars + snow */
   const cv = $("#sky"), cx = cv.getContext("2d");
@@ -657,11 +701,14 @@
 
   /* ============================================================ 0 · the reel */
   const s0 = $$("#s0 .fade");
-  [300, 1200, 2700, 4300, 5800, 7000].forEach((d, k) => setTimeout(() => {
-    s0[k].classList.add("in");
-    if (k === 4) $("#reel").classList.add("stamped");
-  }, d));
-  setTimeout(() => cur === 0 && showNext("Next ›"), 6600);
+  function beginIntro(){
+    [300, 1200, 2700, 4300, 5800, 7000].forEach((d, k) => setTimeout(() => {
+      s0[k].classList.add("in");
+      if (k === 4) $("#reel").classList.add("stamped");
+    }, d));
+    setTimeout(() => cur === 0 && showNext("Next ›"), 6600);
+  }
+  if (!IN_APP) beginIntro();
 
   async function start(){
     hideNext();
@@ -1227,12 +1274,16 @@
   const music = new Audio();
   music.loop = true; music.preload = "auto"; music.setAttribute("playsinline", "");
   let musicReady = false, wantMusic = false;
-  if (!MUTE) renderMusic().then((blob) => {
-    if (!blob) return;
-    music.src = URL.createObjectURL(blob);
-    musicReady = true;
-    if (wantMusic) playMusic();
-  }).catch(() => {});
+  function prepMusic(){
+    if (MUTE) return;
+    renderMusic().then((blob) => {
+      if (!blob) return;
+      music.src = URL.createObjectURL(blob);
+      musicReady = true;
+      if (wantMusic) playMusic();
+    }).catch(() => {});
+  }
+  if (!IN_APP) prepMusic();
   function playMusic(){
     wantMusic = true;
     $("#mus").classList.add("on");
