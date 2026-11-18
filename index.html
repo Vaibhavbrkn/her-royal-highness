@@ -1,0 +1,1338 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0b1230">
+<title>For Her Royal Highness</title>
+<meta name="description" content="A royal proclamation has been issued. Sound on, please.">
+<meta property="og:title" content="For Her Royal Highness 👑">
+<meta property="og:description" content="A royal proclamation has been issued. Sound on, please.">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>👑</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=IM+Fell+English+SC&family=Jost:wght@400;500;600&family=Pinyon+Script&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0b1230; --navy:#17224a; --gold:#e3c06a; --gold2:#f7e4a6; --parch:#f5ead3; --parch2:#e6d2a8;
+    --wine:#7d1e2c; --text:#f5efe3; --muted:#b8bfd8;
+    --serif:"Cormorant Garamond", Georgia, serif; --fell:"IM Fell English SC", Georgia, serif;
+    --script:"Pinyon Script", cursive; --sans:"Jost", system-ui, sans-serif;
+    --top:env(safe-area-inset-top,0px); --bot:env(safe-area-inset-bottom,0px);
+  }
+  *{ box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; }
+  html,body{ height:100%; background:#070b1e; color:var(--text); overflow:hidden; overscroll-behavior:none; touch-action:manipulation; }
+  body{ font-family:var(--serif); -webkit-font-smoothing:antialiased; }
+  button{ font:inherit; color:inherit; background:none; border:0; cursor:pointer; }
+
+  #deck{ position:relative; margin:0 auto; width:min(100%,520px); height:100vh; height:100svh; overflow:hidden;
+    background:radial-gradient(120% 70% at 50% 0%, #1d2a5c 0%, #0f1736 55%, #0a0f26 100%); }
+  @media (min-width:560px){ #deck{ box-shadow:0 0 0 1px rgba(227,192,106,.18), 0 30px 80px rgba(0,0,0,.6); } }
+  #sky{ position:absolute; inset:0; width:100%; height:100%; opacity:0; transition:opacity 1.6s; pointer-events:none; }
+  body.royal #sky{ opacity:1; }
+  #deck::after{ content:""; position:absolute; inset:0; pointer-events:none; z-index:3;
+    background:radial-gradient(130% 90% at 50% 45%, transparent 55%, rgba(3,5,16,.55) 100%); }
+
+  /* ---------- scenes ---------- */
+  .scene{ --pb:92px; position:absolute; inset:0; z-index:2; display:flex; flex-direction:column; align-items:center; text-align:center;
+    padding:calc(50px + var(--top)) 22px calc(var(--pb) + var(--bot)); opacity:0; visibility:hidden; transform:translateY(14px);
+    transition:opacity .8s ease, transform .8s ease, visibility 0s .8s; }
+  .scene.on{ opacity:1; visibility:visible; transform:none; transition:opacity .9s ease .15s, transform .9s ease .15s, visibility 0s; }
+  .head{ flex:none; max-width:420px; }
+  .chap{ font:500 11px/1 var(--sans); letter-spacing:.32em; text-transform:uppercase; color:var(--gold); opacity:.9; }
+  .head h2{ font:400 clamp(25px,7.4vw,32px)/1.1 var(--fell); color:var(--gold2); margin-top:9px; text-shadow:0 2px 18px rgba(227,192,106,.25); }
+  .ins{ font:500 14px/1.45 var(--sans); color:#d9def0; margin-top:9px; }
+  .ins b{ color:var(--gold2); font-weight:600; }
+  .stage{ flex:1; position:relative; width:100%; min-height:0; display:flex; flex-direction:column; align-items:center; justify-content:center; }
+  .say{ font:600 clamp(18px,5.2vw,21px)/1.4 var(--serif); color:var(--text); max-width:400px; text-wrap:balance; }
+  .head, .tcard, .meaning, .wish, .cmp, .wcard p{ text-wrap:balance; }
+  .say i{ color:var(--gold2); }
+  .small{ font:500 italic 17px/1.4 var(--serif); color:#cfd5ea; text-wrap:balance; }
+  .fade{ opacity:0; transform:translateY(8px); transition:opacity .8s ease, transform .8s ease; }
+  .fade.in{ opacity:1; transform:none; }
+  .pulse{ animation:pulse 1.6s ease-in-out infinite; }
+  @keyframes pulse{ 50%{ transform:scale(1.06); filter:brightness(1.15); } }
+
+  /* ---------- chrome ---------- */
+  #prog{ position:absolute; z-index:6; top:calc(16px + var(--top)); left:22px; right:64px; display:flex; gap:5px; opacity:0; transition:opacity .6s; }
+  body.royal #prog{ opacity:1; }
+  #prog i{ flex:1; height:3px; border-radius:3px; background:rgba(255,255,255,.16); transition:background .5s; }
+  #prog i.done{ background:var(--gold); }
+  #mus{ position:absolute; z-index:7; top:calc(6px + var(--top)); right:12px; width:40px; height:40px; border-radius:50%;
+    display:none; place-items:center; background:rgba(255,255,255,.08); border:1px solid rgba(227,192,106,.35); }
+  body.royal #mus{ display:grid; }
+  #mus svg{ width:19px; height:19px; color:var(--gold2); }
+  #mus.on svg{ animation:beat 1.04s ease-in-out infinite; } #mus.on .x{ display:none; }
+  @keyframes beat{ 50%{ transform:scale(1.12); } }
+  #next{ position:absolute; z-index:8; left:50%; bottom:calc(26px + var(--bot)); transform:translate(-50%,20px); opacity:0; pointer-events:none;
+    font:600 14px/1 var(--sans); letter-spacing:.16em; text-transform:uppercase; color:#2a1706; white-space:nowrap;
+    padding:15px 30px; border-radius:99px; background:linear-gradient(180deg,#ffe29a,#e2a940);
+    box-shadow:0 8px 26px rgba(226,169,64,.35), inset 0 1px 0 rgba(255,255,255,.6); transition:opacity .5s, transform .5s; }
+  #next.show{ opacity:1; transform:translate(-50%,0); pointer-events:auto; animation:nudge 1.8s ease-in-out 1s infinite; }
+  @keyframes nudge{ 50%{ box-shadow:0 8px 26px rgba(226,169,64,.35), 0 0 0 9px rgba(255,214,120,.0), inset 0 1px 0 rgba(255,255,255,.6); transform:translate(-50%,-3px); } }
+  #back{ position:absolute; z-index:8; left:12px; bottom:calc(22px + var(--bot)); width:40px; height:40px; border-radius:50%; font:400 24px/1 var(--sans); color:#dfe3f2;
+    background:rgba(11,18,48,.55); border:1px solid rgba(227,192,106,.25); opacity:.8; display:none; }
+  body.royal #back.can{ display:block; }
+
+  /* ---------- curtain ---------- */
+  #curtain{ position:absolute; inset:0; z-index:20; pointer-events:none; }
+  #curtain i{ position:absolute; top:0; bottom:0; width:51%; transition:transform 1.1s cubic-bezier(.7,0,.25,1);
+    background:repeating-linear-gradient(90deg,#5a0f1c 0 14px,#861d2e 22px,#5a0f1c 34px), #6d1424;
+    box-shadow:inset 0 -18px 0 -8px #c89b3c, inset 0 0 60px rgba(0,0,0,.55); }
+  #curtain i:first-child{ left:0; transform:translateX(-101%); }
+  #curtain i:last-child{ right:0; transform:translateX(101%); }
+  #curtain.shut i{ transform:none; }
+
+  /* ---------- 0 · reel intro ---------- */
+  #s0{ justify-content:center; gap:18px; font-family:var(--sans); background:radial-gradient(90% 60% at 50% 30%, #2a1f3f, #0d0b18 70%); }
+  #s0 .say{ font:400 19px/1.45 var(--sans); color:#ece6f6; }
+  #s0 .say.og{ font:400 46px/1 var(--script); color:var(--gold2); text-shadow:0 0 24px rgba(247,228,166,.35); }
+  .reel{ position:relative; width:136px; height:230px; border-radius:18px; overflow:hidden; flex:none;
+    background:linear-gradient(160deg,#f6b7c9,#c58bd8 45%,#6f5bd6); box-shadow:0 18px 40px rgba(0,0,0,.5), 0 0 0 1px rgba(255,255,255,.14); }
+  .reel::before{ content:""; position:absolute; top:8px; left:8px; right:8px; height:2px; border-radius:2px; background:rgba(255,255,255,.3); }
+  .reel::after{ content:""; position:absolute; top:8px; left:8px; height:2px; border-radius:2px; background:#fff; width:0; animation:reelbar 6s linear infinite; }
+  @keyframes reelbar{ to{ width:calc(100% - 16px); } }
+  .reel .cap{ position:absolute; left:10px; right:30px; bottom:12px; text-align:left; font:500 10px/1.35 var(--sans); color:#fff; text-shadow:0 1px 4px rgba(0,0,0,.4); }
+  .reel .cap b{ display:block; font-size:11px; white-space:nowrap; }
+  .reel .icons{ position:absolute; right:7px; bottom:14px; display:flex; flex-direction:column; gap:10px; }
+  .reel .icons svg{ width:17px; height:17px; fill:none; stroke:#fff; stroke-width:2; }
+  .reel .tiara{ position:absolute; left:50%; top:34%; width:64px; transform:translate(-50%,-50%); filter:drop-shadow(0 4px 10px rgba(80,30,90,.45)); }
+  .reel .og{ position:absolute; right:-8px; top:18px; transform:rotate(14deg) scale(0); transition:transform .5s cubic-bezier(.3,1.6,.5,1);
+    font:600 12px/1 var(--sans); letter-spacing:.1em; color:#2a1706; background:var(--gold2); padding:6px 14px 6px 10px; border-radius:6px 0 0 6px; }
+  .reel.stamped .og{ transform:rotate(14deg) scale(1); }
+  #s0 .hint{ font:400 12px/1 var(--sans); letter-spacing:.2em; text-transform:uppercase; color:#9d93b5; }
+</style>
+<style>
+  /* ---------- 1 · proclamation ---------- */
+  .castle{ position:absolute; left:0; right:0; bottom:0; width:100%; z-index:-1; opacity:.95; }
+  .scroll{ position:relative; width:min(90%,340px); margin-top:8px; }
+  .roll{ position:relative; z-index:2; height:22px; border-radius:11px; margin:0 6px;
+    background:linear-gradient(180deg,#9c7234,#f3e1b4 45%,#c9a35f 70%,#8a6128); box-shadow:0 6px 14px rgba(0,0,0,.45); }
+  .roll::before,.roll::after{ content:""; position:absolute; top:-5px; width:14px; height:32px; border-radius:6px;
+    background:linear-gradient(90deg,#5c0f1b,#a33244 50%,#5c0f1b); box-shadow:inset 0 0 0 2px #c89b3c; }
+  .roll::before{ left:-11px; } .roll::after{ right:-11px; }
+  .paper{ display:grid; grid-template-rows:0fr; transition:grid-template-rows 1.9s cubic-bezier(.45,0,.2,1); margin:-11px 14px;
+    background:linear-gradient(90deg,#e3cf9f,#f7edd6 12%,#faf3e2 50%,#f7edd6 88%,#e3cf9f); color:#3b2a18; }
+  .scroll.open .paper{ grid-template-rows:1fr; }
+  .paper > div{ overflow:hidden; }
+  .paper .in{ padding:26px 18px 24px; }
+  .hear{ font:400 21px/1 var(--fell); color:var(--wine); letter-spacing:.06em; }
+  .dec{ font:600 16.5px/1.42 var(--serif); color:#3b2a18; margin-top:10px; }
+  .pd{ font:400 44px/1.1 var(--script); color:#8a1f2d; margin:2px 0 4px; }
+  .hrh{ font:400 13px/1 var(--fell); letter-spacing:.24em; color:#6a512c; margin-top:12px; }
+  .crown-drop{ width:58px; margin:12px auto -2px; display:block; opacity:0; transform:translateY(-36px) rotate(-8deg); }
+  .scroll.open .crown-drop{ animation:drop 1.1s cubic-bezier(.3,1.5,.5,1) 2.2s forwards; }
+  @keyframes drop{ to{ opacity:1; transform:none; } }
+  .name{ font:400 58px/1.05 var(--script); background:linear-gradient(180deg,#a7781f,#e6bd5c 45%,#8d6212);
+    -webkit-background-clip:text; background-clip:text; color:transparent; padding:0 8px; }
+  .og-line{ font:500 italic 15px/1 var(--serif); color:#7a5f36; margin-top:4px; }
+  .seal{ position:absolute; z-index:4; left:50%; top:11px; width:96px; height:96px; transform:translate(-50%,-50%); }
+  .seal svg{ position:absolute; inset:0; width:100%; height:100%; transition:transform 1s cubic-bezier(.3,0,.6,1), opacity 1s; filter:drop-shadow(0 6px 10px rgba(0,0,0,.45)); }
+  .seal.broken{ pointer-events:none; }
+  .seal.broken .h1{ transform:translate(-70px,110px) rotate(-50deg); opacity:0; }
+  .seal.broken .h2{ transform:translate(70px,120px) rotate(45deg); opacity:0; }
+  .ribbon{ position:absolute; z-index:1; left:50%; top:-26px; width:30px; height:74px; transform:translateX(-50%);
+    background:linear-gradient(90deg,#5c0f1b,#9e2638 50%,#5c0f1b); transition:transform 1s, opacity 1s; }
+  .scroll.open .ribbon{ transform:translate(-50%,60px) rotate(12deg); opacity:0; }
+
+  /* ---------- 2 · titles ---------- */
+  .trumpet{ width:min(64vw,230px); margin:4px 0 10px; transform-origin:20% 40%; }
+  .trumpet.blow{ animation:blow .55s ease; }
+  @keyframes blow{ 30%{ transform:rotate(-7deg) scale(1.06); } 70%{ transform:rotate(2deg); } }
+  .tcard{ position:relative; width:min(94%,370px); min-height:142px; padding:20px 18px 18px; border-radius:14px;
+    display:flex; flex-direction:column; justify-content:center; background:rgba(255,255,255,.045);
+    box-shadow:inset 0 0 0 1px rgba(227,192,106,.55), inset 0 0 0 5px rgba(11,18,48,.7), inset 0 0 0 6px rgba(227,192,106,.25); }
+  .tcard.swap{ animation:flip .6s ease; }
+  @keyframes flip{ 45%{ transform:rotateX(80deg); opacity:.15; } }
+  .tcard .tt{ font:400 clamp(21px,6.2vw,25px)/1.15 var(--fell); color:var(--gold2); }
+  .tcard .td{ font:600 italic 18px/1.38 var(--serif); color:#dfe3f2; margin-top:9px; }
+  .tcount{ font:500 11px/1 var(--sans); letter-spacing:.24em; text-transform:uppercase; color:#98a0bf; margin-top:12px; }
+  .full{ font:600 16px/1.5 var(--serif); color:#e6e1d3; max-width:380px; }
+  .full b{ color:var(--gold2); font-weight:700; }
+
+  /* ---------- 3 · arms ---------- */
+  .arms{ width:min(62vw,236px); overflow:visible; }
+  .q{ cursor:pointer; }
+  .q .charge{ transform:scale(0); transform-box:fill-box; transform-origin:center; transition:transform .7s cubic-bezier(.3,1.6,.5,1); }
+  .q.on .charge{ transform:scale(1); }
+  .q .veil{ transition:opacity .6s; } .q.on .veil{ opacity:0; }
+  .q .qm{ font:400 34px var(--fell); fill:#f7e4a6; opacity:.9; transition:opacity .4s; animation:qm 1.8s ease-in-out infinite; } .q.on .qm{ opacity:0; animation:none; }
+  @keyframes qm{ 50%{ opacity:.45; } }
+  .meaning{ min-height:74px; margin-top:6px; max-width:380px; }
+  .meaning .mt{ font:400 19px/1.2 var(--fell); color:var(--gold2); }
+  .meaning .md{ font:600 17px/1.4 var(--serif); color:#e2e6f3; margin-top:5px; }
+  .motto{ width:min(78vw,300px); margin-top:-4px; opacity:0; transform:scaleX(.3); transition:opacity .8s, transform 1s cubic-bezier(.3,1.4,.5,1); }
+  .motto.in{ opacity:1; transform:none; }
+
+  /* ---------- 4 · stables + polo ---------- */
+  .stalls{ display:grid; grid-template-columns:repeat(3,1fr); gap:9px; width:100%; max-width:420px; }
+  .stall{ display:flex; flex-direction:column; justify-content:flex-start; align-items:center;
+    border-radius:60px 60px 10px 10px; padding:12px 5px 12px; background:radial-gradient(circle at 50% 30%, #77553a, #2a1a10 70%);
+    border:2px solid #6e4b2b; box-shadow:0 10px 20px rgba(0,0,0,.4); transition:transform .4s, border-color .4s, opacity .4s; }
+  .stall svg{ width:84%; display:block; margin:0 auto; }
+  .stall .nm{ font:400 16px/1.1 var(--fell); color:var(--gold2); margin-top:6px; }
+  .stall .ds{ font:400 12px/1.35 var(--sans); color:#d3cbbd; margin-top:5px; text-wrap:balance; }
+  .stalls.chosen .stall{ opacity:.35; transform:scale(.96); }
+  .stalls.chosen .stall.pick{ opacity:1; transform:translateY(-4px) scale(1.04); border-color:var(--gold2); }
+  .field{ position:relative; width:100%; height:min(40svh,300px); border-radius:16px; overflow:hidden; display:none;
+    background:linear-gradient(#0c1838 0%,#24386a 58%,#d7e2f2 58.4%,#f3f7fc 100%); box-shadow:0 14px 30px rgba(0,0,0,.45), 0 0 0 1px rgba(255,255,255,.1); }
+  .field.show{ display:block; }
+  .field .layer{ position:absolute; left:0; width:200%; display:flex; }
+  .field .layer svg{ width:50%; flex:none; }
+  .mtn{ bottom:41%; animation:slide 60s linear infinite; }
+  .trees{ bottom:39%; animation:slide 16s linear infinite; }
+  .field.stop .layer, .field.stop .lines{ animation-play-state:paused; }
+  @keyframes slide{ to{ transform:translateX(-50%); } }
+  .lines{ position:absolute; left:0; right:0; bottom:3%; height:30%;
+    background:linear-gradient(90deg, rgba(140,165,210,.45) 0 26px, transparent 26px) 0 0 / 80px 3px repeat-x,
+      linear-gradient(90deg, rgba(140,165,210,.4) 0 44px, transparent 44px) 0 100% / 130px 4px repeat-x;
+    animation:lines .5s linear infinite; }
+  @keyframes lines{ to{ background-position:-80px 0, -130px 100%; } }
+  .rider{ position:absolute; left:1%; bottom:6%; width:66%; overflow:visible; }
+  .field.stop .rider *{ animation-play-state:paused !important; }
+  .ball{ position:absolute; left:0; bottom:9%; width:13px; height:13px; margin-left:-6.5px; border-radius:50%;
+    background:radial-gradient(circle at 35% 30%, #fff, #e9e4d8 60%, #b9b2a2); box-shadow:0 3px 4px rgba(20,30,60,.35); will-change:transform; }
+  .zone{ position:absolute; bottom:4.5%; width:48px; height:48px; margin-left:-24px; border-radius:50%;
+    border:2px dashed rgba(226,169,64,.9); box-shadow:0 0 16px rgba(255,210,110,.45); animation:pulse 1.2s ease-in-out infinite; }
+  .goal{ position:absolute; bottom:7%; right:-30%; width:70px; height:46%; transition:right 1s ease-out; }
+  .goal.in{ right:5%; }
+  .goal i{ position:absolute; bottom:0; width:9px; height:100%; border-radius:4px;
+    background:repeating-linear-gradient(180deg,#f4f1ea 0 12px,#7d1e2c 12px 24px); box-shadow:2px 3px 4px rgba(20,30,60,.3); }
+  .goal i:first-child{ left:0; } .goal i:last-child{ right:0; }
+  .goaltxt{ position:absolute; left:0; right:0; top:22%; font:400 54px/1 var(--fell); color:var(--gold2);
+    text-shadow:0 3px 0 #7d1e2c, 0 0 30px rgba(255,214,120,.6); transform:scale(0); transition:transform .6s cubic-bezier(.3,1.7,.5,1); }
+  .goaltxt.in{ transform:scale(1); }
+  #swing{ margin-top:16px; width:96px; height:96px; border-radius:50%; font:600 16px/1 var(--sans); letter-spacing:.14em; text-transform:uppercase;
+    color:#2a1706; background:radial-gradient(circle at 40% 30%, #ffeab0, #e2a940 70%); box-shadow:0 10px 26px rgba(226,169,64,.4), inset 0 -4px 0 rgba(120,70,10,.3); }
+  #swing:active{ transform:scale(.94); }
+  #swing[disabled]{ opacity:.45; }
+  .pmsg{ min-height:48px; margin-top:12px; }
+  /* gallop */
+  .rider .leg, .rider .shin, .rider .arm, .rider .pony, .rider .bob{ transform-box:view-box; }
+  .rider .bob{ animation:bob .44s ease-in-out infinite; }
+  @keyframes bob{ 50%{ transform:translateY(-4px); } }
+  .rider .lf{ animation:legA .44s linear infinite; } .rider .rf{ animation:legA .44s linear -.11s infinite; }
+  .rider .lh{ animation:legB .44s linear -.22s infinite; } .rider .rh{ animation:legB .44s linear -.33s infinite; }
+  .rider .shin{ animation:shinF .44s linear infinite; }
+  .rider .rf .shin{ animation-delay:-.11s; }
+  .rider .lh .shin{ animation-name:shinH; animation-delay:-.22s; } .rider .rh .shin{ animation-name:shinH; animation-delay:-.33s; }
+  @keyframes shinF{ 0%{ transform:rotate(8deg); } 35%{ transform:rotate(72deg); } 62%{ transform:rotate(18deg); } 100%{ transform:rotate(8deg); } }
+  @keyframes shinH{ 0%{ transform:rotate(-6deg); } 40%{ transform:rotate(-52deg); } 70%{ transform:rotate(-14deg); } 100%{ transform:rotate(-6deg); } }
+  @keyframes legA{ 0%{ transform:rotate(-38deg); } 50%{ transform:rotate(30deg); } 100%{ transform:rotate(-38deg); } }
+  @keyframes legB{ 0%{ transform:rotate(34deg); } 50%{ transform:rotate(-30deg); } 100%{ transform:rotate(34deg); } }
+  .rider .pony{ animation:pony .44s ease-in-out infinite; }
+  @keyframes pony{ 50%{ transform:rotate(10deg); } }
+  .rider .arm{ transition:transform .3s ease-out; transform:rotate(120deg); }
+  .rider.swing .arm{ transform:rotate(-25deg); transition:transform .13s cubic-bezier(.6,0,.9,.5); }
+  .castle{ bottom:calc(0px - var(--pb) - var(--bot)); left:-22px; right:-22px; width:calc(100% + 44px); }
+  .castle .wins{ filter:drop-shadow(0 0 3px rgba(255,190,90,.9)); }
+  .castle .flag{ transform-box:fill-box; transform-origin:left center; animation:flag 1.4s ease-in-out infinite alternate; }
+  @keyframes flag{ to{ transform:scaleX(.72) skewY(5deg); } }
+  .conf{ position:absolute; z-index:12; left:50%; width:7px; height:10px; border-radius:2px; pointer-events:none; }
+  .wsnow circle{ animation:wsnow 4s linear infinite; }
+  @keyframes wsnow{ from{ transform:translateY(-120px); } to{ transform:translateY(60px); } }
+  .cmp.swap{ animation:flip .6s ease; }
+  .arms{ width:min(62vw,236px,34svh); }
+
+  /* ---------- 5 · garden ---------- */
+  .garden{ position:absolute; top:0; left:-22px; right:-22px; bottom:calc(0px - var(--pb) - var(--bot)); }
+  .garden .ground{ position:absolute; left:-4%; right:-4%; bottom:0; height:56%; }
+  .rose{ position:absolute; width:56px; pointer-events:none; transform:translate(-50%,-100%); overflow:visible; }
+  .rose .stem{ transform-box:fill-box; transform-origin:bottom; animation:grow .9s cubic-bezier(.3,1,.4,1) both; }
+  .rose .bloom{ transform-box:fill-box; transform-origin:center; animation:bloom 1s cubic-bezier(.3,1.6,.5,1) .55s both; }
+  @keyframes grow{ from{ transform:scaleY(0); } }
+  @keyframes bloom{ from{ transform:scale(0) rotate(-90deg); } }
+  .cmp{ position:relative; z-index:3; width:min(94%,380px); min-height:108px; padding:16px 16px; border-radius:14px; margin-top:2px;
+    background:rgba(10,16,42,.72); backdrop-filter:blur(4px); -webkit-backdrop-filter:blur(4px);
+    box-shadow:inset 0 0 0 1px rgba(227,192,106,.4); display:flex; flex-direction:column; justify-content:center; }
+  .cmp .cn{ font:500 11px/1 var(--sans); letter-spacing:.24em; text-transform:uppercase; color:#98a0bf; margin-top:10px; }
+  .garden-tap{ position:absolute; inset:0; z-index:2; }
+
+  /* ---------- 6 · stars ---------- */
+  .crownsky{ width:100%; max-width:420px; flex:1; min-height:0; overflow:visible; }
+  .st{ cursor:pointer; }
+  .st .core{ transition:r .6s, fill .6s; }
+  .st .glow{ opacity:.25; transition:opacity .8s, r .8s; }
+  .st.lit .glow{ opacity:.9; }
+  .st .ring{ fill:none; stroke:rgba(247,228,166,.55); stroke-width:1.2; animation:ring 2s ease-out infinite; transform-box:fill-box; transform-origin:center; }
+  .st.lit .ring{ display:none; }
+  @keyframes ring{ from{ transform:scale(.6); opacity:1; } to{ transform:scale(1.8); opacity:0; } }
+  .cline{ fill:none; stroke:rgba(247,228,166,.8); stroke-width:1.4; stroke-linecap:round; stroke-dasharray:var(--len); stroke-dashoffset:var(--len); transition:stroke-dashoffset 2.6s ease; }
+  .cline.in{ stroke-dashoffset:0; }
+  .wish{ min-height:84px; max-width:390px; }
+  .wish .wl{ font:500 11px/1 var(--sans); letter-spacing:.24em; text-transform:uppercase; color:var(--gold); margin-bottom:8px; }
+
+  /* ---------- 7 · poem ---------- */
+  .parch{ position:relative; width:min(96%,380px); padding:22px 20px 20px; border-radius:6px; color:#3a2816; cursor:pointer;
+    background:radial-gradient(120% 90% at 50% 40%, #fbf4e3, #efdfba 75%, #e2c993); box-shadow:0 16px 36px rgba(0,0,0,.5), inset 0 0 40px rgba(150,110,50,.25); }
+  .parch h3{ font:400 34px/1 var(--script); color:#7d1e2c; }
+  .parch .by{ font:500 italic 14px/1.3 var(--serif); color:#7a6040; margin:4px 0 10px; }
+  .verse{ margin-top:10px; }
+  .verse span{ display:block; font:600 clamp(15px,2.35svh,18px)/1.42 var(--serif); clip-path:inset(0 100% 0 0); transition:clip-path 1.1s ease; }
+  .verse.in span{ clip-path:inset(0 0 0 0); }
+  .verse.now span{ transition:none; clip-path:inset(0 0 0 0); }
+  .verse.in span:nth-child(2){ transition-delay:.9s; } .verse.in span:nth-child(3){ transition-delay:1.8s; } .verse.in span:nth-child(4){ transition-delay:2.7s; }
+  .quill{ position:absolute; right:-8px; top:-62px; width:50px; transform:rotate(12deg); transform-origin:bottom left; }
+  .quill.write{ animation:write .45s ease-in-out 6; }
+  @keyframes write{ 50%{ transform:rotate(4deg) translate(-4px,3px); } }
+  .ptap{ font:500 12px/1 var(--sans); letter-spacing:.2em; text-transform:uppercase; color:#8b6a3e; margin-top:14px; }
+
+  /* ---------- 8 · fireside ---------- */
+  .room{ width:100%; max-width:420px; flex:1; min-height:0; overflow:visible; }
+  .room .tap{ cursor:pointer; }
+  .flame{ transform-box:fill-box; transform-origin:bottom center; transform:scale(0); transition:transform 1.2s cubic-bezier(.3,1.4,.5,1); }
+  .lit .flame{ transform:scale(1); animation:flick .5s ease-in-out infinite alternate; }
+  .lit .flame:nth-child(2){ animation-duration:.42s; } .lit .flame:nth-child(3){ animation-duration:.61s; }
+  @keyframes flick{ from{ transform:scale(1,1) skewX(-3deg); } to{ transform:scale(.92,1.1) skewX(4deg); } }
+  .warm{ opacity:0; transition:opacity 2s; } .lit .warm{ opacity:1; }
+  .dim{ transition:opacity 2s; } .lit .dim{ opacity:0; }
+  .steam path{ opacity:0; } .sipped .steam path{ animation:steam 2.6s ease-out infinite; }
+  .sipped .steam path:nth-child(2){ animation-delay:.8s; } .sipped .steam path:nth-child(3){ animation-delay:1.6s; }
+  @keyframes steam{ 0%{ opacity:0; transform:translateY(6px); } 30%{ opacity:.8; } 100%{ opacity:0; transform:translateY(-22px); } }
+  .mallow{ transform-box:fill-box; } .sipped .mallow{ animation:mallow 1.6s ease-in-out infinite; }
+  @keyframes mallow{ 50%{ transform:translateY(-1.6px) rotate(8deg); } }
+  .fmsg{ min-height:56px; margin-top:4px; }
+  #warrant{ position:absolute; z-index:9; inset:0; display:grid; place-items:center; padding:calc(40px + var(--top)) 16px calc(40px + var(--bot));
+    background:rgba(5,8,22,.6); opacity:0; visibility:hidden; transition:opacity 1s, visibility 0s 1s; overflow-y:auto; }
+  #warrant.in{ opacity:1; visibility:visible; transition:opacity 1.2s; }
+  .wcard{ position:relative; width:min(100%,370px); padding:26px 22px 22px; border-radius:6px; color:#3a2816; text-align:center;
+    background:radial-gradient(120% 90% at 50% 40%, #fdf7e8, #efdfba 80%, #e2c993); transform:translateY(40px) scale(.96); transition:transform 1.2s cubic-bezier(.3,1.2,.4,1);
+    box-shadow:0 20px 50px rgba(0,0,0,.6), inset 0 0 0 7px #fbf3df, inset 0 0 0 8px #c69a3e, inset 0 0 0 11px #fbf3df, inset 0 0 0 12px rgba(198,154,62,.6); }
+  #warrant.in .wcard{ transform:none; }
+  .wcard .w1{ font:400 13px/1 var(--fell); letter-spacing:.28em; color:#7d1e2c; margin-top:6px; }
+  .wcard .w2{ font:400 36px/1.1 var(--script); color:#7d1e2c; margin:6px 0 2px; }
+  .wcard .w3{ font:500 italic 14px/1.3 var(--serif); color:#7a6040; }
+  .wcard .w4{ font:600 16.5px/1.45 var(--serif); margin-top:12px; }
+  .wcard .w5{ font:400 13px/1.3 var(--fell); letter-spacing:.08em; color:#6a512c; margin-top:12px; }
+  .wcard .w6{ font:600 18px/1.4 var(--serif); color:#7d1e2c; margin-top:14px; }
+  .wcard .sig{ display:flex; align-items:flex-end; justify-content:space-between; gap:10px; margin-top:12px; }
+  .wcard .sig svg{ width:62px; flex:none; filter:drop-shadow(0 3px 4px rgba(0,0,0,.3)); }
+  .wcard .sig div{ text-align:right; font:400 27px/1 var(--script); color:#3a2816; }
+  .wcard .sig small{ display:block; font:500 italic 13px/1.3 var(--serif); color:#7a6040; margin-top:4px; }
+  #again{ margin-top:14px; font:500 12px/1 var(--sans); letter-spacing:.2em; text-transform:uppercase; color:#f7e4a6; padding:10px 14px; }
+
+  @media (max-height:640px){
+    .scene{ --pb:80px; padding-top:calc(42px + var(--top)); }
+    .head h2{ font-size:24px; margin-top:6px; } .ins{ font-size:13px; margin-top:6px; }
+    .name{ font-size:48px; } .pd{ font-size:36px; } .paper .in{ padding:18px 14px; }
+    .reel{ width:112px; height:190px; } .trumpet{ width:180px; }
+    #next{ bottom:calc(16px + var(--bot)); padding:13px 26px; }
+  }
+  @media (prefers-reduced-motion:reduce){ *{ animation-duration:.01ms !important; animation-iteration-count:1 !important; } }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <linearGradient id="goldG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff2bf"/><stop offset=".45" stop-color="#e8bd57"/><stop offset="1" stop-color="#a27218"/></linearGradient>
+    <radialGradient id="waxG" cx="36%" cy="30%" r="75%"><stop offset="0" stop-color="#d9505c"/><stop offset=".55" stop-color="#9c1c2a"/><stop offset="1" stop-color="#5a0c16"/></radialGradient>
+    <clipPath id="cpL" clipPathUnits="userSpaceOnUse"><path d="M-60-60H2L-5-30 5-9-4 12 5 34-2 60H-60Z"/></clipPath>
+    <clipPath id="cpR" clipPathUnits="userSpaceOnUse"><path d="M2-60H60V60H-2L5 34-4 12 5-9-5-30Z"/></clipPath>
+    <symbol id="crownS" viewBox="0 0 120 92">
+      <path d="M14 72 6 26l26 22L60 12l28 36 26-22-8 46Z" fill="url(#goldG)" stroke="#7a5414" stroke-width="2.5" stroke-linejoin="round"/>
+      <rect x="11" y="68" width="98" height="16" rx="4" fill="url(#goldG)" stroke="#7a5414" stroke-width="2.5"/>
+      <circle cx="6" cy="24" r="6" fill="#fff8e6" stroke="#7a5414" stroke-width="1.5"/><circle cx="60" cy="10" r="6" fill="#fff8e6" stroke="#7a5414" stroke-width="1.5"/><circle cx="114" cy="24" r="6" fill="#fff8e6" stroke="#7a5414" stroke-width="1.5"/>
+      <circle cx="32" cy="76" r="4.5" fill="#b3202f"/><circle cx="60" cy="76" r="5" fill="#2f6fd0"/><circle cx="88" cy="76" r="4.5" fill="#2e9a62"/>
+      <path d="M60 30l7 12-7 12-7-12Z" fill="#b3202f" stroke="#7a5414" stroke-width="1.5"/>
+    </symbol>
+    <symbol id="sealS" viewBox="-50 -50 100 100">
+      <path d="M0-46C14-47 22-40 31-35 42-29 47-17 46-3 48 10 44 22 35 32 26 42 13 47 0 46-14 48-26 42-35 33-44 23-48 10-46-3-47-17-41-29-31-36-22-42-12-46 0-46Z" fill="url(#waxG)"/>
+      <circle r="31" fill="none" stroke="#5e0d17" stroke-width="3" opacity=".75"/>
+      <circle r="30" fill="none" stroke="#f08a92" stroke-width="1" opacity=".35" transform="translate(-1.2 -1.2)"/>
+      <path d="M-12-17-8-25-3-19 0-27 3-19 8-25 12-17Z" fill="#5e0d17"/>
+      <text y="17" text-anchor="middle" font-family="IM Fell English SC, Georgia, serif" font-size="36" fill="#5e0d17">J</text>
+    </symbol>
+    <symbol id="horseHead" viewBox="0 0 100 100">
+      <path d="M18 98C14 70 18 40 40 20L45 4 52 16C66 14 74 22 82 34 88 44 94 52 96 60 98 66 96 72 90 74 84 76 80 74 76 70 70 66 64 64 58 62 52 62 50 68 52 78 54 86 56 92 58 98Z" fill="var(--coat,#f0cf74)"/>
+      <path d="M40 20C28 34 22 56 21 98H18C14 70 18 40 40 20Z" fill="var(--mane,#b8862c)"/>
+      <path d="M41 21C46 24 52 22 55 18 50 26 44 28 40 27Z" fill="var(--mane,#b8862c)"/>
+      <circle cx="61" cy="31" r="3" fill="var(--eye,#3a2610)"/><ellipse cx="88" cy="64" rx="2.6" ry="1.8" fill="var(--eye,#3a2610)"/>
+    </symbol>
+    <symbol id="mallets" viewBox="0 0 100 100">
+      <g stroke="#7a5414" stroke-width="1.5" fill="url(#goldG)">
+        <path d="M17 14l4-4 62 66-4 4Z"/><path d="M83 14l-4-4-62 66 4 4Z"/>
+        <rect x="60" y="70" width="30" height="10" rx="4" transform="rotate(-45 75 75)"/><rect x="10" y="70" width="30" height="10" rx="4" transform="rotate(45 25 75)"/>
+      </g>
+      <circle cx="50" cy="90" r="7" fill="#fbf6ea" stroke="#7a5414" stroke-width="1.5"/>
+    </symbol>
+    <symbol id="flake" viewBox="-50 -50 100 100">
+      <g stroke="#eef2fb" stroke-width="5" stroke-linecap="round" fill="none">
+        <g id="arm1"><path d="M0 0V-42M0-26-11-36M0-26 11-36M0-12-8-19M0-12 8-19"/></g>
+        <use href="#arm1" transform="rotate(60)"/><use href="#arm1" transform="rotate(120)"/><use href="#arm1" transform="rotate(180)"/><use href="#arm1" transform="rotate(240)"/><use href="#arm1" transform="rotate(300)"/>
+      </g>
+      <circle r="6" fill="#eef2fb"/>
+    </symbol>
+    <symbol id="quill" viewBox="0 0 100 100">
+      <path d="M6 74C20 66 36 66 50 74V34C36 26 20 26 6 34Z" fill="#fbf6ea" stroke="#7a5414" stroke-width="2"/>
+      <path d="M94 74C80 66 64 66 50 74V34C64 26 80 26 94 34Z" fill="#f2e8d2" stroke="#7a5414" stroke-width="2"/>
+      <path d="M14 44h26M14 52h26M14 60h20M60 44h26M60 52h26M60 60h18" stroke="#b08a4a" stroke-width="2"/>
+      <path d="M52 70C60 48 72 26 92 6 86 28 76 46 58 70Z" fill="url(#goldG)" stroke="#7a5414" stroke-width="1.5"/>
+      <path d="M52 72 88 12" stroke="#7a5414" stroke-width="1.5"/>
+    </symbol>
+  </defs>
+</svg>
+
+<div id="deck">
+  <canvas id="sky"></canvas>
+  <div id="prog"></div>
+  <button id="mus" aria-label="Pause or play the music"><svg viewBox="0 0 24 24"><path d="M9 17V5.5l10-2V15" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><circle cx="6.5" cy="17.5" r="2.8" fill="currentColor"/><circle cx="16.5" cy="15.5" r="2.8" fill="currentColor"/><path class="x" d="M4 4 20 20" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg></button>
+
+  <!-- 0 · the reel -->
+  <section class="scene on" id="s0">
+    <p class="say fade">While scrolling through reels, I saw this…</p>
+    <div class="reel fade" id="reel">
+      <svg class="tiara" viewBox="0 0 120 92"><use href="#crownS"/></svg>
+      <div class="og">THE OG</div>
+      <div class="cap"><b>Princess Day ✨</b>POV: you made her a whole royal website</div>
+      <div class="icons">
+        <svg viewBox="0 0 24 24"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10Z"/></svg>
+        <svg viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-3.2-6.4L20 4v5h-5"/></svg>
+        <svg viewBox="0 0 24 24"><path d="M21 3 3 10l7 3 3 7Z"/></svg>
+      </div>
+    </div>
+    <p class="say fade">…and it reminded me of you.</p>
+    <p class="say fade">So I thought, why not create one for the OG,</p>
+    <p class="say og fade">the real princess.</p>
+    <p class="hint fade">Sound on, please</p>
+  </section>
+
+  <!-- 1 · proclamation -->
+  <section class="scene" id="s1">
+    <div class="head">
+      <p class="chap">Chapter I</p><h2>A Royal Proclamation</h2>
+      <p class="ins" id="ins1">A letter has arrived from the palace. <b>Tap the wax seal</b> to open it.</p>
+    </div>
+    <div class="stage">
+      <div class="scroll" id="scroll">
+        <div class="ribbon"></div>
+        <div class="roll"></div>
+        <div class="paper"><div><div class="in">
+          <p class="hear">Hear ye, hear ye!</p>
+          <p class="dec">By order of the Royal Court, this eighteenth day of November is hereby proclaimed</p>
+          <p class="pd">Princess Day</p>
+          <p class="dec">to be celebrated across the realm in honour of</p>
+          <svg class="crown-drop" viewBox="0 0 120 92"><use href="#crownS"/></svg>
+          <p class="hrh">HER ROYAL HIGHNESS</p>
+          <p class="name">Princess Jess</p>
+          <p class="og-line">the original, the one and only</p>
+        </div></div></div>
+        <div class="roll"></div>
+        <button class="seal pulse" id="seal" aria-label="Break the wax seal">
+          <svg class="h1" viewBox="-50 -50 100 100"><g clip-path="url(#cpL)"><use href="#sealS" x="-50" y="-50" width="100" height="100"/></g></svg>
+          <svg class="h2" viewBox="-50 -50 100 100"><g clip-path="url(#cpR)"><use href="#sealS" x="-50" y="-50" width="100" height="100"/></g></svg>
+        </button>
+      </div>
+      <svg class="castle" id="castle" viewBox="0 0 400 170" preserveAspectRatio="xMidYMax meet"></svg>
+    </div>
+  </section>
+
+  <!-- 2 · titles -->
+  <section class="scene" id="s2">
+    <div class="head">
+      <p class="chap">Chapter II</p><h2>Her Full Royal Title</h2>
+      <p class="ins" id="ins2">Royals never have just one title. <b>Tap the trumpet</b> to announce each of yours.</p>
+    </div>
+    <div class="stage">
+      <button id="trumpet" aria-label="Sound the trumpet">
+        <svg class="trumpet" id="trumpetSvg" viewBox="0 0 240 124">
+          <path d="M58 34h96v60l-16-10-16 10-16-10-16 10-16-10-16 10Z" fill="#7d1e2c" stroke="#e3c06a" stroke-width="2.5" stroke-linejoin="round"/>
+          <use href="#crownS" x="84" y="44" width="44" height="34"/>
+          <rect x="22" y="26" width="166" height="7" rx="3.5" fill="url(#goldG)"/>
+          <path d="M186 26C204 24 216 16 228 6V54C216 44 204 36 186 33Z" fill="url(#goldG)" stroke="#9a6c1c" stroke-width="1"/>
+          <rect x="8" y="25" width="16" height="9" rx="3" fill="url(#goldG)"/>
+          <circle cx="58" cy="29.5" r="5" fill="url(#goldG)"/><circle cx="154" cy="29.5" r="5" fill="url(#goldG)"/>
+        </svg>
+      </button>
+      <div class="tcard" id="tcard">
+        <p class="tt">Ready when you are, Your Highness.</p>
+        <p class="td">The royal herald has cleared his throat.</p>
+        <p class="tcount" id="tcount">7 titles to announce</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3 · coat of arms -->
+  <section class="scene" id="s3">
+    <div class="head">
+      <p class="chap">Chapter III</p><h2>The House of Jess</h2>
+      <p class="ins" id="ins3">Every royal house needs a coat of arms. <b>Tap each quarter</b> of the shield.</p>
+    </div>
+    <div class="stage">
+      <svg class="arms" id="arms" viewBox="-34 -62 268 312"></svg>
+      <svg class="motto" id="motto" viewBox="0 0 300 60">
+        <path d="M12 20 42 12V46L12 54 24 33Z" fill="#5c0f1b"/><path d="M288 20 258 12V46L288 54 276 33Z" fill="#5c0f1b"/>
+        <path d="M40 12Q150-4 260 12V46Q150 30 40 46Z" fill="#7d1e2c" stroke="#e3c06a" stroke-width="2"/>
+        <text x="150" y="35" text-anchor="middle" font-family="IM Fell English SC, Georgia, serif" font-size="17" letter-spacing="2" fill="#f7e4a6">SEMPER FABULOSA</text>
+      </svg>
+      <div class="meaning" id="meaning"><p class="md small">Four quarters, four little truths.</p></div>
+    </div>
+  </section>
+
+  <!-- 4 · stables + snow polo -->
+  <section class="scene" id="s4">
+    <div class="head">
+      <p class="chap">Chapter IV</p><h2>The Royal Stables</h2>
+      <p class="ins" id="ins4">There's a snow-polo match on the frozen lake tonight. <b>Choose your horse.</b></p>
+    </div>
+    <div class="stage">
+      <div class="stalls" id="stalls">
+        <button class="stall" data-h="0"><svg viewBox="0 0 100 100" style="--coat:#c9ced6;--mane:#59616d;--eye:#1d2230"><use href="#horseHead"/></svg><p class="nm">Earl Grey</p><p class="ds">Calm, classy, a little bit posh.</p></button>
+        <button class="stall" data-h="1"><svg viewBox="0 0 100 100" style="--coat:#b5652f;--mane:#5a2810;--eye:#24120a"><use href="#horseHead"/></svg><p class="nm">Duchess</p><p class="ds">Fast, fearless, and knows she's pretty.</p></button>
+        <button class="stall" data-h="2"><svg viewBox="0 0 100 100" style="--coat:#2c2c36;--mane:#101016;--eye:#c9a75a"><use href="#horseHead"/></svg><p class="nm">Midnight</p><p class="ds">Dramatic. Adores a winter night.</p></button>
+      </div>
+      <div class="field" id="field">
+        <div class="layer mtn" id="mtnL"></div>
+        <div class="layer trees" id="treeL"></div>
+        <div class="lines"></div>
+        <div class="goal" id="goal"><i></i><i></i></div>
+        <div class="zone" id="zone"></div>
+        <div class="ball" id="ball"></div>
+        <svg class="rider" id="rider" viewBox="0 0 240 170"></svg>
+        <p class="goaltxt" id="goaltxt">GOAL!</p>
+      </div>
+      <button id="swing" hidden>Swing!</button>
+      <p class="say pmsg" id="pmsg"></p>
+    </div>
+  </section>
+
+  <!-- 5 · winter garden -->
+  <section class="scene" id="s5">
+    <div class="head">
+      <p class="chap">Chapter V</p><h2>The Winter Garden</h2>
+      <p class="ins" id="ins5">Here, roses bloom in the snow. <b>Tap the snow</b> to plant one.</p>
+    </div>
+    <div class="stage" style="justify-content:flex-start">
+      <div class="garden" id="garden"><svg class="ground" id="groundSvg" viewBox="0 0 400 220" preserveAspectRatio="none"></svg></div>
+      <div class="cmp" id="cmp"><p class="say" id="cmpT">Seven roses are waiting under the snow.</p><p class="cn" id="cmpN">0 of 7 planted</p></div>
+    </div>
+  </section>
+
+  <!-- 6 · stars -->
+  <section class="scene" id="s6">
+    <div class="head">
+      <p class="chap">Chapter VI</p><h2>Written in the Stars</h2>
+      <p class="ins" id="ins6">The royal astronomer has your forecast. <b>Tap each star.</b></p>
+    </div>
+    <div class="stage">
+      <svg class="crownsky" id="crownsky" viewBox="-52 -44 104 84"></svg>
+      <div class="wish" id="wish"><p class="wl" id="wl">Seven stars · seven wishes</p><p class="say" id="wt"></p></div>
+    </div>
+  </section>
+
+  <!-- 7 · poem -->
+  <section class="scene" id="s7">
+    <div class="head">
+      <p class="chap">Chapter VII</p><h2>An Ode</h2>
+      <p class="ins" id="ins7">From the Court Poet, who is also the Court Jester. <b>Tap the page</b> for each verse.</p>
+    </div>
+    <div class="stage">
+      <div class="parch" id="parch" role="button" aria-label="Write the next verse">
+        <svg class="quill" id="quillSvg" viewBox="0 0 60 120"><path d="M8 116C14 84 26 46 54 4 50 40 38 76 14 114Z" fill="#fbf6ea" stroke="#8a6a3a" stroke-width="2"/><path d="M10 116 52 10" stroke="#8a6a3a" stroke-width="1.6"/><path d="M8 116l-4 4" stroke="#2a1a0c" stroke-width="3" stroke-linecap="round"/></svg>
+        <h3>For Princess Jess</h3>
+        <div class="verse" id="verse"><span>The quill is dipped. The ink is warm.</span><span>The poet clears his throat…</span></div>
+        <p class="ptap" id="ptap">Tap to write verse 1 of 4</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 8 · fireside -->
+  <section class="scene" id="s8">
+    <div class="head">
+      <p class="chap">Chapter VIII</p><h2>The Fireside</h2>
+      <p class="ins" id="ins8">And finally, the best kind of night. <b>Tap the fireplace.</b></p>
+    </div>
+    <div class="stage">
+      <svg class="room" id="room" viewBox="0 0 360 400"></svg>
+      <p class="say fmsg fade" id="fmsg"></p>
+    </div>
+  </section>
+
+  <div id="warrant">
+    <div style="display:flex;flex-direction:column;align-items:center">
+      <div class="wcard">
+        <svg viewBox="0 0 120 92" style="width:56px"><use href="#crownS"/></svg>
+        <p class="w1">BY ROYAL WARRANT</p>
+        <p class="w2">Princess Jess</p>
+        <p class="w3">Princess Day · 18 November 2026</p>
+        <p class="w4">Granted to Her Royal Highness for services to cozy winter nights, fearless riding, flawless ledgers and impeccable taste, and for making ordinary days a lot more fun.</p>
+        <p class="w5">VALID FOREVER<br>NO RENEWAL REQUIRED</p>
+        <p class="w6">Happy Princess Day, Jess.<br>Keep the crown on. It suits you.</p>
+        <div class="sig">
+          <svg viewBox="-50 -50 100 100"><use href="#sealS" x="-50" y="-50" width="100" height="100"/></svg>
+          <div>the Court Jester<small>(a.k.a. this little guy)</small></div>
+        </div>
+      </div>
+      <button id="again">↺ Watch it again</button>
+    </div>
+  </div>
+
+  <button id="back" aria-label="Previous chapter">‹</button>
+  <button id="next">Next ›</button>
+  <div id="curtain"><i></i><i></i></div>
+</div>
+
+<script>
+(() => {
+  "use strict";
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+  const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+  const rnd = (a, b) => a + Math.random() * (b - a);
+  const MUTE = /[?&]mute\b/.test(location.search);
+
+  /* ============================================================ sky: stars + snow */
+  const cv = $("#sky"), cx = cv.getContext("2d");
+  let W = 0, H = 0, stars = [], flakes = [], snowRate = 0;
+  const flake = (any) => ({ x: Math.random() * W, y: any ? Math.random() * H : -8, r: rnd(.8, 2.6), vy: rnd(.35, 1.05), vx: rnd(-.2, .2), p: Math.random() * 6.3 });
+  function size(){
+    const r = $("#deck").getBoundingClientRect(), d = Math.min(2, devicePixelRatio || 1);
+    W = r.width; H = r.height; cv.width = W * d; cv.height = H * d; cx.setTransform(d, 0, 0, d, 0, 0);
+    stars = Array.from({ length: Math.round(W * H / 2400) }, () => ({ x: Math.random() * W, y: Math.random() * H * .8, r: rnd(.3, 1.3), p: Math.random() * 6.3, s: rnd(.4, 1.5) }));
+    flakes = Array.from({ length: 80 }, () => flake(true));
+  }
+  function frame(t){
+    cx.clearRect(0, 0, W, H);
+    cx.fillStyle = "#fff6dc";
+    for (const s of stars){ cx.globalAlpha = .3 + .7 * Math.abs(Math.sin(t / 1000 * s.s + s.p)); cx.beginPath(); cx.arc(s.x, s.y, s.r, 0, 6.283); cx.fill(); }
+    cx.fillStyle = "#ffffff"; cx.globalAlpha = .8;
+    const n = Math.round(flakes.length * snowRate);
+    for (let i = 0; i < n; i++){
+      const f = flakes[i];
+      f.y += f.vy; f.x += f.vx + Math.sin(t / 900 + f.p) * .3;
+      if (f.y > H + 6) Object.assign(f, flake(false));
+      cx.beginPath(); cx.arc(f.x, f.y, f.r, 0, 6.283); cx.fill();
+    }
+    cx.globalAlpha = 1;
+    requestAnimationFrame(frame);
+  }
+  addEventListener("resize", size); size(); requestAnimationFrame(frame);
+
+  function confetti(box, n = 30, top = "40%"){
+    for (let i = 0; i < n; i++){
+      const s = document.createElement("i");
+      s.className = "conf"; s.style.top = top;
+      s.style.background = ["#f7e4a6", "#e3c06a", "#ffffff", "#b3202f", "#8fb6ff"][i % 5];
+      box.appendChild(s);
+      const a = Math.random() * 6.283, d = rnd(60, 170);
+      s.animate([{ transform: "translate(-50%,-50%)", opacity: 1 },
+        { transform: `translate(${Math.cos(a) * d}px, ${Math.sin(a) * d + 70}px) rotate(${rnd(-360, 360)}deg)`, opacity: 0 }],
+        { duration: rnd(1000, 1800), easing: "cubic-bezier(.2,.7,.4,1)", fill: "forwards" });
+      setTimeout(() => s.remove(), 1900);
+    }
+  }
+
+  /* ============================================================ navigation */
+  const scenes = $$(".scene"), N = scenes.length;
+  const SNOW = [0, .6, .35, .35, .8, 1, .25, .15, .45];
+  $("#prog").innerHTML = scenes.slice(1).map(() => "<i></i>").join("");
+  const bars = $$("#prog i");
+  const enter = {}, leave = {}, finished = new Set();
+  let cur = 0;
+  const nextBtn = $("#next");
+  const showNext = (label = "Next ›") => { nextBtn.textContent = label; nextBtn.classList.add("show"); };
+  const hideNext = () => nextBtn.classList.remove("show");
+  function go(i){
+    if (i < 0 || i >= N || i === cur) return;
+    if (leave[cur]) leave[cur]();
+    scenes[cur].classList.remove("on");
+    cur = i;
+    scenes[i].classList.add("on");
+    bars.forEach((b, k) => b.classList.toggle("done", k < i));
+    $("#back").classList.toggle("can", i > 1);
+    hideNext();
+    snowRate = SNOW[i];
+    if (enter[i]) enter[i]();
+    if (finished.has(i) && i < N - 1) setTimeout(() => cur === i && showNext(), 700);
+  }
+  function complete(i, delay = 900){
+    finished.add(i);
+    setTimeout(() => { if (cur === i && i < N - 1) showNext(); }, delay);
+  }
+  nextBtn.addEventListener("click", () => {
+    sfx.tick();
+    if (cur === 0) start(); else go(cur + 1);
+  });
+  $("#back").addEventListener("click", () => { sfx.tick(); go(cur - 1); });
+
+  /* ============================================================ 0 · the reel */
+  const s0 = $$("#s0 .fade");
+  [300, 1200, 2700, 4300, 5800, 7000].forEach((d, k) => setTimeout(() => {
+    s0[k].classList.add("in");
+    if (k === 4) $("#reel").classList.add("stamped");
+  }, d));
+  setTimeout(() => cur === 0 && showNext("Next ›"), 6600);
+
+  async function start(){
+    hideNext();
+    audioStart();
+    $("#curtain").classList.add("shut");
+    sfx.whoosh();
+    await wait(1200);
+    document.body.classList.add("royal");
+    go(1);
+    await wait(300);
+    $("#curtain").classList.remove("shut");
+    sfx.fanfare();
+  }
+
+  /* ============================================================ 1 · proclamation */
+  (function castle(){
+    const dark = "#1c2656";
+    const cren = (x, y, w, n) => { const cw = w / (n * 2 - 1); let s = ""; for (let k = 0; k < n; k++) s += `<rect x="${(x + k * 2 * cw).toFixed(1)}" y="${y - 6}" width="${cw.toFixed(1)}" height="7"/>`; return s; };
+    const win = ([x, y]) => `<path d="M${x} ${y + 10}V${y + 3}a3 3 0 0 1 6 0V${y + 10}Z"/>`;
+    let s = `<defs><radialGradient id="hz" cx="50%" cy="85%" r="60%"><stop offset="0" stop-color="rgba(150,170,240,.6)"/><stop offset=".55" stop-color="rgba(100,120,210,.2)"/><stop offset="1" stop-color="rgba(90,110,200,0)"/></radialGradient></defs>`;
+    s += `<ellipse cx="200" cy="140" rx="290" ry="150" fill="url(#hz)"/><path d="M0 170V150Q100 132 200 140T400 146V170Z" fill="#e3e9f5" opacity=".9"/><g fill="${dark}">`;
+    s += `<rect x="60" y="104" width="280" height="60"/>${cren(60, 104, 280, 19)}`;
+    s += `<rect x="148" y="62" width="104" height="100"/>${cren(148, 62, 104, 7)}`;
+    s += `<rect x="84" y="46" width="42" height="118"/>${cren(84, 46, 42, 4)}<rect x="274" y="46" width="42" height="118"/>${cren(274, 46, 42, 4)}`;
+    s += `<rect x="186" y="22" width="28" height="42"/>${cren(186, 22, 28, 3)}`;
+    s += `<path d="M30 164V92L44 66 58 92V164Z"/><path d="M342 164V92L356 66 370 92V164Z"/></g>`;
+    [[105, 40], [295, 40], [200, 16], [44, 66], [356, 66]].forEach(([x, y]) => {
+      s += `<path d="M${x} ${y}V${y - 22}" stroke="${dark}" stroke-width="2"/><path class="flag" d="M${x} ${y - 22}l17 5-17 5Z" fill="#a3283b"/>`;
+    });
+    s += `<g class="wins" fill="#ffcf7a">${[[96, 66], [114, 66], [96, 96], [114, 96], [286, 66], [304, 66], [286, 96], [304, 96], [164, 80], [184, 80], [210, 80], [230, 80], [197, 32], [76, 124], [100, 128], [300, 128], [322, 124], [41, 104], [353, 104]].map(win).join("")}</g>`;
+    s += `<path d="M186 164V134a14 14 0 0 1 28 0V164Z" fill="#ffb95a" opacity=".9"/>`;
+    s += `<g fill="#e7edf8" opacity=".85"><rect x="60" y="97" width="280" height="2.5"/><rect x="148" y="55" width="104" height="2.5"/><rect x="84" y="39" width="42" height="2.5"/><rect x="274" y="39" width="42" height="2.5"/></g>`;
+    $("#castle").innerHTML = s;
+  })();
+
+  $("#seal").addEventListener("click", async () => {
+    const seal = $("#seal");
+    if (seal.classList.contains("broken")) return;
+    seal.classList.remove("pulse"); seal.classList.add("broken");
+    sfx.crack();
+    $("#ins1").innerHTML = "By royal decree…";
+    await wait(450);
+    $("#scroll").classList.add("open");
+    sfx.unroll();
+    await wait(2400);
+    sfx.fanfare();
+    $("#ins1").innerHTML = "It's official. <b>Long may she reign.</b>";
+    complete(1, 1400);
+  });
+
+  /* ============================================================ 2 · titles */
+  const TITLES = [
+    ["Princess of Cozy Winter Nights", "Keeper of blankets, candlelight and hot chocolate."],
+    ["Chancellor of the Royal Exchequer", "Madam CA herself. The crown's books have never looked better."],
+    ["Duchess of the Royal Stables", "The horses bow first."],
+    ["Countess of the Polo Field", "Fluent in chukkas. Allergic to losing."],
+    ["Lady of Impeccable Taste", "In books, in boots, in pretty much everything."],
+    ["Defender of Good Vibes", "Bad days surrender on sight."],
+    ["Jess, First of Her Name", "The original. Accept no imitations."],
+  ];
+  let ti = 0, tBusy = false;
+  async function announce(){
+    if (tBusy || ti > TITLES.length) return;
+    tBusy = true;
+    const tr = $("#trumpetSvg"), card = $("#tcard");
+    tr.classList.remove("blow"); void tr.getBoundingClientRect(); tr.classList.add("blow");
+    sfx.toot(ti);
+    card.classList.remove("swap"); void card.offsetWidth; card.classList.add("swap");
+    await wait(280);
+    if (ti < TITLES.length){
+      card.querySelector(".tt").textContent = TITLES[ti][0];
+      card.querySelector(".td").textContent = TITLES[ti][1];
+      $("#tcount").textContent = `Title ${ti + 1} of ${TITLES.length}`;
+      if (ti === TITLES.length - 1) $("#ins2").innerHTML = "<b>One more tap</b> for the whole thing, in a single breath.";
+    } else {
+      card.innerHTML = `<p class="full">Her Royal Highness <b>Jess</b>, First of Her Name, Princess of Cozy Winter Nights, Chancellor of the Royal Exchequer, Duchess of the Royal Stables, Countess of the Polo Field, Lady of Impeccable Taste, Defender of Good Vibes, and <b>the OG princess</b>.</p><p class="small" style="margin-top:10px">(The herald needed a glass of water after that.)</p>`;
+      $("#ins2").innerHTML = "That's the full title. Every word of it earned.";
+      sfx.fanfare(true);
+      complete(2, 1600);
+    }
+    ti++;
+    await wait(420);
+    tBusy = false;
+  }
+  $("#trumpet").addEventListener("click", announce);
+  $("#tcard").addEventListener("click", announce);
+
+  /* ============================================================ 3 · coat of arms */
+  const ARMS = [
+    ["The Horse", "For the girl who's most at home in the saddle."],
+    ["The Mallets", "Polo days, a fearless swing, and a very competitive streak."],
+    ["The Snowflake", "For cozy winter nights: the best kind of night."],
+    ["The Quill & Ledger", "A sharp mind, and never a number out of place."],
+  ];
+  (function buildArms(){
+    const sh = "M0 0H200V110C200 180 140 220 100 240 60 220 0 180 0 110Z";
+    const laurel = (side) => {
+      let s = `<g fill="#cfa94e" stroke="#7a5414" stroke-width=".8">`;
+      for (let k = 0; k < 9; k++){
+        const deg = 118 + k * 12, th = deg * Math.PI / 180;
+        let x = 100 + 126 * Math.cos(th), y = 118 + 126 * Math.sin(th), rot = deg + 115;
+        if (side > 0){ x = 200 - x; rot = 180 - rot; }
+        s += `<ellipse cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" rx="11" ry="4.5" transform="rotate(${rot.toFixed(1)} ${x.toFixed(1)} ${y.toFixed(1)})"/>`;
+      }
+      return s + "</g>";
+    };
+    const Q = [[0, 0, "#7d1e2c"], [100, 0, "#1d2c63"], [0, 120, "#1d2c63"], [100, 120, "#7d1e2c"]];
+    const C = [
+      `<use href="#horseHead" x="16" y="18" width="68" height="68" style="--coat:#f0cf74;--mane:#c3912f;--eye:#7d1e2c"/>`,
+      `<use href="#mallets" x="118" y="20" width="64" height="64"/>`,
+      `<use href="#flake" x="22" y="128" width="58" height="58"/>`,
+      `<use href="#quill" x="108" y="124" width="64" height="64"/>`,
+    ];
+    let s = `<defs><clipPath id="shC"><path d="${sh}"/></clipPath></defs>${laurel(-1)}${laurel(1)}`;
+    s += `<use href="#crownS" x="56" y="-60" width="88" height="67"/><g clip-path="url(#shC)">`;
+    Q.forEach(([x, y, f], k) => {
+      s += `<g class="q" data-i="${k}"><rect x="${x}" y="${y}" width="100" height="120" fill="${f}"/><g class="charge">${C[k]}</g>`;
+      s += `<rect class="veil" x="${x}" y="${y}" width="100" height="120" fill="rgba(5,8,22,.38)"/><text class="qm" x="${x + 50}" y="${y + (k < 2 ? 72 : 64)}" text-anchor="middle">?</text></g>`;
+    });
+    s += `<path d="M100 0V240M0 120H200" stroke="#e3c06a" stroke-width="2"/></g><path d="${sh}" fill="none" stroke="url(#goldG)" stroke-width="6"/>`;
+    $("#arms").innerHTML = s;
+  })();
+  let armsOn = 0;
+  $("#arms").addEventListener("click", (e) => {
+    const q = e.target.closest(".q");
+    if (!q || q.classList.contains("on")) return;
+    q.classList.add("on");
+    sfx.chime(armsOn);
+    const [t, d] = ARMS[q.dataset.i];
+    $("#meaning").innerHTML = `<p class="mt">${t}</p><p class="md">${d}</p>`;
+    if (++armsOn === 4){
+      $("#ins3").innerHTML = "And every house needs a motto…";
+      setTimeout(() => {
+        $("#motto").classList.add("in");
+        sfx.fanfare(true);
+        $("#meaning").innerHTML = `<p class="mt">The Family Motto</p><p class="md">“Always legendary.” (Fabulous, too.)</p>`;
+        complete(3, 1200);
+      }, 2600);
+    }
+  });
+
+  /* ============================================================ 4 · stables + snow polo */
+  const HORSES = [
+    { c: "#c9ced6", d: "#9ba2ad", m: "#59616d", line: "Earl Grey has been brushed four times in your honour." },
+    { c: "#b5652f", d: "#8a4a20", m: "#5a2810", line: "Duchess has been practising her good side all week." },
+    { c: "#3a3a46", d: "#23232c", m: "#101016", line: "Midnight insisted on a winter night. Naturally." },
+  ];
+  (function scenery(){
+    const mtn = `<svg viewBox="0 0 400 80"><path d="M0 80V40L40 38 70 56 120 14 170 60 210 30 260 62 300 22 350 56 400 40V80Z" fill="#34477b"/><path d="M120 14 106 28l8-2 6 6 6-8 8 2ZM300 22l-12 12 7-1 5 5 5-6 7 1ZM210 30l-9 9 5-1 4 4 4-5 5 1Z" fill="#e8eef8"/></svg>`;
+    let tr = "";
+    for (let k = 0; k < 9; k++){
+      const x = 16 + k * 44 + (k % 2) * 8, h = 26 + (k * 7) % 14;
+      tr += `<path d="M${x} ${60 - h}l-11 ${h * .55}h6l-9 ${h * .45}h28l-9 ${-h * .45}h6Z" fill="#17342a"/><path d="M${x} ${60 - h}l-6 ${(h * .3).toFixed(1)}h12Z" fill="#eef3fa"/>`;
+    }
+    const trees = `<svg viewBox="0 0 400 60">${tr}</svg>`;
+    $("#mtnL").innerHTML = mtn + mtn;
+    $("#treeL").innerHTML = trees + trees;
+  })();
+  function buildRider(h){
+    const leg = (cls, x, y, far) => {
+      const col = far ? h.d : h.c;
+      return `<g class="leg ${cls}" style="transform-origin:${x}px ${y}px"><path d="M${x} ${y}V${y + 24}" stroke="${col}" stroke-width="9" stroke-linecap="round"/><g class="shin" style="transform-origin:${x}px ${y + 24}px"><path d="M${x} ${y + 24}V${y + 44}" stroke="${col}" stroke-width="6.5" stroke-linecap="round"/><rect x="${x - 5}" y="${y + 43}" width="11" height="6" rx="2" fill="#2a2420"/></g></g>`;
+    };
+    $("#rider").innerHTML = `<g class="bob">
+      ${leg("lh", 74, 92, 1)}${leg("lf", 150, 92, 1)}
+      <path d="M60 68C42 64 32 78 27 100 37 90 47 84 58 82Z" fill="${h.m}"/>
+      <path d="M58 64C70 50 128 50 156 58 170 62 174 80 164 94 146 104 96 106 74 100 54 96 48 78 58 64Z" fill="${h.c}"/>
+      <path d="M146 62C154 44 166 32 178 26L190 36C182 48 176 66 166 88Z" fill="${h.c}"/>
+      <path d="M150 60C156 44 166 32 178 24L177 31C168 40 160 50 155 64Z" fill="${h.m}"/>
+      <path d="M176 22C188 18 200 26 212 44 216 50 212 56 205 54 196 50 186 44 180 40Z" fill="${h.c}"/>
+      <path d="M178 24 175 11 185 20Z" fill="${h.c}"/><circle cx="192" cy="31" r="2" fill="#15100c"/>
+      ${leg("rh", 86, 94, 0)}${leg("rf", 160, 92, 0)}
+      <rect x="98" y="50" width="38" height="17" rx="4" fill="#7d1e2c" stroke="#e3c06a" stroke-width="1.5"/>
+      <text x="117" y="63" text-anchor="middle" font-family="IM Fell English SC, serif" font-size="12" fill="#f7e4a6">J</text>
+      <path d="M142 37 206 49" stroke="#3a2416" stroke-width="1.4"/>
+      <path d="M126 26 142 37" stroke="#5c0f1b" stroke-width="6" stroke-linecap="round"/>
+      <path d="M114 52 125 74 121 88" fill="none" stroke="#f3efe6" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M122 82 120 93" stroke="#2a1a10" stroke-width="9" stroke-linecap="round"/>
+      <path d="M113 52 126 25" stroke="#7d1e2c" stroke-width="15" stroke-linecap="round"/>
+      <g class="pony" style="transform-origin:124px 14px"><path d="M124 13C114 11 107 16 103 25 111 21 117 20 124 18Z" fill="#4a2a17"/></g>
+      <circle cx="130" cy="15" r="7" fill="#f1c9a5"/>
+      <path d="M121.5 14a8.6 8.6 0 0 1 17.2-1Z" fill="#17224a"/><path d="M137 12.5 144 14.5" stroke="#17224a" stroke-width="2.4" stroke-linecap="round"/>
+      <g class="arm" style="transform-origin:126px 27px"><path d="M126 27 141 45" stroke="#7d1e2c" stroke-width="6.5" stroke-linecap="round"/><path d="M141 45V134" stroke="#d6ae6c" stroke-width="2.6" stroke-linecap="round"/><rect x="131" y="132" width="22" height="7" rx="3" fill="#efe0bb" stroke="#9a7a40" stroke-width="1"/><circle cx="141" cy="45" r="3.6" fill="#f3efe6"/></g>
+    </g>`;
+  }
+  const MISS = ["So close! The ball got nervous. Here comes another.", "The ball is clearly intimidated. One more!"];
+  const polo = { state: "off", x: 0, y: 0, misses: 0, t: 0, sx: 0, tx: 0, zx: 0, fw: 0, fh: 0 };
+  function poloGeo(){
+    const fr = $("#field").getBoundingClientRect(), rr = $("#rider").getBoundingClientRect();
+    polo.fw = fr.width; polo.fh = fr.height; polo.zx = rr.left - fr.left + rr.width * (150 / 240);
+    $("#zone").style.left = polo.zx + "px";
+  }
+  function newBall(){ poloGeo(); polo.x = polo.fw + 20; polo.y = 0; polo.state = "roll"; $("#swing").disabled = false; }
+  let poloLast = 0;
+  function poloStep(now){
+    const dt = Math.min(50, now - (poloLast || now)) / 1000; poloLast = now;
+    if (polo.state === "roll"){
+      polo.x -= polo.fw * .34 * dt;
+      if (polo.x < -24){
+        $("#pmsg").textContent = polo.misses < MISS.length ? MISS[polo.misses] : MISS[1];
+        polo.misses++;
+        newBall();
+      }
+    } else if (polo.state === "fly"){
+      polo.t += dt;
+      const p = Math.min(1, polo.t / 1.05);
+      polo.x = polo.sx + (polo.tx - polo.sx) * p;
+      polo.y = Math.sin(p * Math.PI) * polo.fh * .3;
+      if (p >= 1) goal();
+    }
+    $("#ball").style.transform = `translate(${polo.x}px, ${-polo.y}px)`;
+    if (polo.state === "roll" || polo.state === "fly") requestAnimationFrame(poloStep);
+  }
+  $("#stalls").addEventListener("click", async (e) => {
+    const b = e.target.closest(".stall"), wrap = $("#stalls");
+    if (!b || wrap.classList.contains("chosen")) return;
+    const h = HORSES[b.dataset.h];
+    b.classList.add("pick"); wrap.classList.add("chosen");
+    sfx.chime(2);
+    $("#ins4").textContent = h.line;
+    await wait(2000);
+    wrap.style.display = "none";
+    buildRider(h);
+    $("#field").classList.add("show");
+    $("#swing").hidden = false;
+    $("#ins4").innerHTML = "Snow polo on the frozen lake. <b>Tap SWING</b> when the ball reaches the gold ring.";
+    newBall();
+    poloLast = 0;
+    requestAnimationFrame(poloStep);
+    if (cur === 4) sfx.gallop(true);
+  });
+  $("#swing").addEventListener("click", () => {
+    if (polo.state !== "roll") return;
+    const r = $("#rider");
+    r.classList.add("swing"); setTimeout(() => r.classList.remove("swing"), 480);
+    sfx.swish();
+    poloGeo();
+    const close = Math.abs(polo.x - polo.zx) < 36, gift = !close && polo.misses >= 2;
+    if (close || gift){
+      polo.state = "fly"; polo.t = 0; polo.sx = gift ? polo.zx : polo.x; polo.tx = polo.fw * .95 - 35;
+      if (gift){ polo.x = polo.zx; }
+      sfx.thwack();
+      $("#goal").classList.add("in");
+      $("#swing").disabled = true;
+      $("#pmsg").textContent = gift ? "Royal privilege: the referee says that one counts." : "What a shot!";
+    } else {
+      $("#pmsg").textContent = polo.x > polo.zx ? "A touch early. Wait for the ring!" : "Just missed it. Next one!";
+    }
+  });
+  function goal(){
+    polo.state = "done";
+    $("#goaltxt").classList.add("in");
+    confetti($("#field"), 34, "35%");
+    sfx.cheer();
+    $("#pmsg").innerHTML = `Of course. Was there ever any doubt?<br><span class="small">The crowd (me) goes wild.</span>`;
+    $("#ins4").innerHTML = "<b>Princess Jess</b> wins the Winter Cup.";
+    $("#swing").hidden = true;
+    setTimeout(() => { $("#field").classList.add("stop"); sfx.gallop(false); }, 2600);
+    complete(4, 1800);
+  }
+  leave[4] = () => sfx.gallop(false);
+  enter[4] = () => { if (polo.state === "roll" || polo.state === "fly") sfx.gallop(true); };
+
+  /* ============================================================ 5 · winter garden */
+  const COMPS = [
+    "You make hard things look effortless.",
+    "Your laugh could fix a bad day.",
+    "You're brilliant, and never smug about it.",
+    "You're kind in all the quiet ways that count.",
+    "You stay graceful under pressure, every single time.",
+    "You make people feel at home.",
+    "Elegant and fun in the same sentence. That's you.",
+  ];
+  const ROSES = [["#b3202f", "#fbf6ee"], ["#fbf6ee", "#f1dfbf"], ["#e79aaa", "#fde9ee"], ["#a51c2b", "#e0505f"], ["#b3202f", "#fbf6ee"], ["#f0cd6e", "#fff3cf"], ["#b3202f", "#fbf6ee"]];
+  $("#groundSvg").innerHTML = `
+    <g fill="#16342a"><rect x="6" y="10" width="92" height="40" rx="16"/><rect x="118" y="2" width="56" height="48" rx="22"/><rect x="226" y="2" width="56" height="48" rx="22"/><rect x="302" y="10" width="92" height="40" rx="16"/></g>
+    <g fill="#eef3fa" opacity=".9"><rect x="10" y="8" width="84" height="7" rx="3.5"/><rect x="124" y="0" width="44" height="7" rx="3.5"/><rect x="232" y="0" width="44" height="7" rx="3.5"/><rect x="306" y="8" width="84" height="7" rx="3.5"/></g>
+    <g><rect x="196" y="8" width="8" height="40" fill="#1d1a24"/><rect x="190" y="0" width="20" height="14" rx="3" fill="#ffcf7a" opacity=".95"/></g>
+    <path d="M0 44C70 30 130 40 200 36S330 28 400 42V220H0Z" fill="#d9e3f1"/>
+    <path d="M0 62C80 50 140 58 200 54S320 48 400 58V220H0Z" fill="#eef3fa"/>`;
+  function rose(x, y, k, depth){
+    const L = Math.round(rnd(44, 72)), [o, i] = ROSES[k % ROSES.length];
+    let b = "";
+    for (let j = 0; j < 5; j++){ const a = (j * 72 - 54) * Math.PI / 180; b += `<path d="M0 0L${(Math.cos(a) * 28).toFixed(1)} ${(Math.sin(a) * 28).toFixed(1)}" stroke="#2f6b3c" stroke-width="7" stroke-linecap="round"/>`; }
+    for (let j = 0; j < 5; j++){ const a = (j * 72 - 90) * Math.PI / 180; b += `<circle cx="${(Math.cos(a) * 13).toFixed(1)}" cy="${(Math.sin(a) * 13).toFixed(1)}" r="12.5" fill="${o}" stroke="rgba(70,0,12,.35)"/>`; }
+    for (let j = 0; j < 5; j++){ const a = (j * 72 - 54) * Math.PI / 180; b += `<circle cx="${(Math.cos(a) * 6.5).toFixed(1)}" cy="${(Math.sin(a) * 6.5).toFixed(1)}" r="7" fill="${i}" stroke="rgba(70,0,12,.2)"/>`; }
+    b += `<circle r="4.6" fill="#e9b949"/><circle r="1.8" fill="#a8761f"/>`;
+    const el = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    el.setAttribute("class", "rose");
+    el.setAttribute("viewBox", `-32 ${-L - 34} 64 ${L + 38}`);
+    el.style.left = x + "px"; el.style.top = y + "px"; el.style.width = (44 + 22 * depth) + "px";
+    el.innerHTML = `<ellipse cx="0" cy="1" rx="14" ry="3.5" fill="#ffffff" opacity=".9"/>
+      <path class="stem" d="M0 0C-4 ${-L * .4} 4 ${-L * .7} 0 ${-L}" stroke="#2f6b3c" stroke-width="3.2" fill="none"/>
+      <path class="stem" d="M0 ${-L * .42}c-10-2-16-8-18-14 8 0 14 4 18 14Z" fill="#3d7d4a"/>
+      <path class="stem" d="M1 ${-L * .64}c10-2 15-8 17-13-8 0-13 4-17 13Z" fill="#3d7d4a"/>
+      <g transform="translate(0 ${-L})"><g class="bloom">${b}</g></g>`;
+    $("#garden").appendChild(el);
+  }
+  let planted = 0;
+  $("#garden").addEventListener("click", (e) => {
+    if (planted >= COMPS.length) return;
+    const g = $("#garden").getBoundingClientRect();
+    const x = Math.max(26, Math.min(g.width - 26, e.clientX - g.left));
+    const top = g.height * .5 + 34, bottom = g.height - 104;
+    const y = Math.max(top, Math.min(bottom, e.clientY - g.top));
+    rose(x, y, planted, (y - top) / Math.max(1, bottom - top));
+    sfx.chime(planted);
+    $("#cmpT").textContent = COMPS[planted];
+    $("#cmpN").textContent = `${planted + 1} of ${COMPS.length} planted`;
+    $("#cmp").classList.remove("swap"); void $("#cmp").offsetWidth; $("#cmp").classList.add("swap");
+    if (++planted === COMPS.length){
+      $("#ins5").innerHTML = "The garden is in full bloom.";
+      setTimeout(() => {
+        $("#cmpT").textContent = "We ran out of snow before we ran out of compliments.";
+        $("#cmpN").textContent = "— the royal gardener";
+        sfx.sparkle();
+        complete(5, 1200);
+      }, 2600);
+    }
+  });
+
+  /* ============================================================ 6 · the northern crown */
+  const CRB = [[26.7, -28.5, 4.1], [38, -6, 3.7], [22.8, 17.8, 2.2], [5.1, 22, 3.8], [-10.2, 24.3, 4.6], [-27.8, 16.2, 4.1], [-36.2, -13.5, 4.9]];
+  const WISHES = [
+    "This new chapter? It's going to fit you perfectly.",
+    "A year of big wins, especially the ones you've quietly worked so hard for.",
+    "Open fields, fast horses and perfect riding weather.",
+    "Winter nights that are cozy, slow and full of laughter.",
+    "That trip you keep dreaming about, finally booked.",
+    "Your favourite people, always close and always cheering.",
+    "And everything you've been manifesting, arriving right on time.",
+  ];
+  (function buildSky(){
+    let s = `<defs><radialGradient id="sgl"><stop offset="0" stop-color="#fff8e0"/><stop offset=".35" stop-color="rgba(255,226,150,.5)"/><stop offset="1" stop-color="rgba(255,226,150,0)"/></radialGradient></defs>`;
+    s += `<path class="cline" id="cline" d="M${CRB.map((c) => c[0] + " " + c[1]).join("L")}"/>`;
+    CRB.forEach((c, k) => {
+      const r = 1.1 + (5 - c[2]) * .75;
+      s += `<g class="st" data-k="${k}"><circle class="glow" cx="${c[0]}" cy="${c[1]}" r="${(r * 4.5).toFixed(1)}" fill="url(#sgl)"/><circle class="ring" cx="${c[0]}" cy="${c[1]}" r="${(r + 2.6).toFixed(1)}"/><circle class="core" cx="${c[0]}" cy="${c[1]}" r="${r.toFixed(1)}" fill="#fff4d0"/><circle cx="${c[0]}" cy="${c[1]}" r="9" fill="transparent"/></g>`;
+    });
+    s += `<text id="gemma" x="${CRB[2][0] + 5}" y="${CRB[2][1] + 11}" font-family="Jost, sans-serif" font-size="3.6" letter-spacing=".4" fill="#f7e4a6" opacity="0" style="transition:opacity 1.5s">GEMMA</text>`;
+    $("#crownsky").innerHTML = s;
+    const cl = $("#cline"); cl.style.setProperty("--len", cl.getTotalLength ? Math.ceil(cl.getTotalLength()) : 200);
+  })();
+  let lit = 0;
+  $("#crownsky").addEventListener("click", (e) => {
+    const st = e.target.closest(".st");
+    if (!st || st.classList.contains("lit") || lit >= CRB.length) return;
+    st.classList.add("lit");
+    const core = st.querySelector(".core"); core.setAttribute("r", (+core.getAttribute("r") * 1.5).toFixed(1));
+    sfx.twinkle(lit);
+    $("#wl").textContent = `Wish ${lit + 1} of ${CRB.length}`;
+    $("#wt").textContent = WISHES[lit];
+    if (++lit === CRB.length){
+      $("#ins6").innerHTML = "Look what the stars just made…";
+      setTimeout(() => {
+        $("#cline").classList.add("in");
+        sfx.sparkle();
+        setTimeout(() => {
+          $("#gemma").style.opacity = 1;
+          $("#wl").textContent = "Corona Borealis · The Northern Crown";
+          $("#wt").innerHTML = "A real constellation. Even the sky keeps a crown ready for you.<span class='small' style='display:block'>Its brightest star is called Gemma: the jewel. Seemed fitting.</span>";
+          complete(6, 1800);
+        }, 2400);
+      }, 2200);
+    }
+  });
+
+  /* ============================================================ 7 · the ode */
+  const VERSES = [
+    ["The snow is soft, the night is long,", "the fire hums its crackling song,", "and every candle, more or less,", "was lit tonight for Princess Jess."],
+    ["She takes the reins with easy grace,", "she rides the field at royal pace,", "and when her mallet swings, oh my,", "the polo ball just learns to fly."],
+    ["Her ledgers balance to the pence,", "her mind is sharp, her wit immense,", "and now a brand-new chapter's here:", "the start of her most splendid year."],
+    ["So raise a cup of something warm", "to her who weathers every storm:", "the realm's bright star, and nothing less,", "the OG royal, Princess Jess."],
+  ];
+  let vi = 0, vBusy = false, vSkip = null;
+  $("#parch").addEventListener("click", async () => {
+    if (vBusy){ if (vSkip) vSkip(); return; }
+    if (vi >= VERSES.length) return;
+    vBusy = true;
+    const v = $("#verse"), q = $("#quillSvg");
+    v.classList.remove("in", "now");
+    await wait(250);
+    v.innerHTML = VERSES[vi].map((l) => `<span>${l}</span>`).join("");
+    void v.offsetWidth; v.classList.add("in");
+    q.classList.remove("write"); void q.getBoundingClientRect(); q.classList.add("write");
+    sfx.scratch();
+    vi++;
+    $("#ptap").textContent = vi < VERSES.length ? `Verse ${vi} of 4 · tap for the next` : "— the Court Poet (and Jester)";
+    await Promise.race([wait(3700), new Promise((r) => (vSkip = r))]);
+    vSkip = null;
+    v.classList.add("now"); q.classList.remove("write");
+    vBusy = false;
+    if (vi === VERSES.length){ $("#ins7").innerHTML = "The poet bows. <b>Deeply.</b>"; complete(7, 400); }
+  });
+
+  /* ============================================================ 8 · the fireside */
+  (function buildRoom(){
+    let snow = "";
+    for (let k = 0; k < 22; k++) snow += `<circle cx="${(26 + Math.random() * 96).toFixed(1)}" cy="${(30 + Math.random() * 166).toFixed(1)}" r="${rnd(.8, 2).toFixed(1)}" style="animation-duration:${rnd(3, 6).toFixed(1)}s;animation-delay:-${rnd(0, 6).toFixed(1)}s"/>`;
+    let garland = "";
+    for (let k = 0; k < 12; k++) garland += `<circle cx="${172 + k * 15}" cy="${166 + (k % 2) * 3}" r="2.4" fill="#c8283a"/>`;
+    $("#room").innerHTML = `
+      <defs>
+        <linearGradient id="wallG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#33221e"/><stop offset="1" stop-color="#1d1311"/></linearGradient>
+        <linearGradient id="nightG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0d1838"/><stop offset="1" stop-color="#2b3e76"/></linearGradient>
+        <radialGradient id="warmG" cx="71%" cy="76%" r="75%"><stop offset="0" stop-color="rgba(255,170,70,.5)"/><stop offset=".45" stop-color="rgba(255,130,40,.16)"/><stop offset="1" stop-color="rgba(255,120,40,0)"/></radialGradient>
+        <clipPath id="winC"><path d="M22 196V86a52 52 0 0 1 104 0V196Z"/></clipPath>
+        <pattern id="tartan" width="16" height="16" patternUnits="userSpaceOnUse"><rect width="16" height="16" fill="#7d1e2c"/><path d="M0 4h16M0 12h16M4 0v16M12 0v16" stroke="#1d3a2c" stroke-width="3" opacity=".85"/><path d="M0 8h16M8 0v16" stroke="#e3c06a" stroke-width=".8"/></pattern>
+      </defs>
+      <rect width="360" height="400" rx="18" fill="url(#wallG)"/>
+      <rect y="262" width="360" height="138" fill="#22150f"/><path d="M0 262H360" stroke="#4a3226" stroke-width="3"/>
+      <path d="M22 196V86a52 52 0 0 1 104 0V196Z" fill="url(#nightG)"/>
+      <circle cx="98" cy="84" r="12" fill="#f6eed6"/>
+      <g clip-path="url(#winC)"><g class="wsnow" fill="#fff">${snow}</g></g>
+      <path d="M74 34V196M22 132H126" stroke="#3b2a22" stroke-width="5"/>
+      <path d="M22 196V86a52 52 0 0 1 104 0V196Z" fill="none" stroke="#4a342a" stroke-width="7"/>
+      <rect x="14" y="194" width="120" height="9" rx="2" fill="#4a342a"/>
+      <path d="M12 200V26C30 52 34 124 22 200Z" fill="#6d1424"/><path d="M136 200V26C118 52 114 124 126 200Z" fill="#6d1424"/>
+      <rect x="6" y="20" width="136" height="8" rx="4" fill="#c89b3c"/>
+      <use href="#mallets" x="212" y="40" width="88" height="88" opacity=".95"/>
+      <g class="tap" id="fireT">
+        <rect x="172" y="160" width="170" height="182" fill="#cdbfa6"/>
+        <path d="M204 342V238a53 53 0 0 1 106 0V342Z" fill="#140b08"/>
+        <rect x="220" y="318" width="76" height="13" rx="6" fill="#5a3a24" transform="rotate(-6 258 324)"/>
+        <rect x="222" y="322" width="72" height="12" rx="6" fill="#6e4a2e" transform="rotate(7 258 328)"/>
+        <g>
+          <path class="flame" d="M257 326C228 308 234 280 249 254 251 274 262 278 262 260 279 280 286 307 257 326Z" fill="#ff8a2a"/>
+          <path class="flame" d="M257 326C239 314 241 294 252 279 256 292 262 292 264 283 273 296 273 315 257 326Z" fill="#ffc34a"/>
+          <path class="flame" d="M257 326C247 320 247 307 254 298 257 307 262 307 262 302 267 311 267 321 257 326Z" fill="#fff0b0"/>
+        </g>
+        <rect x="164" y="148" width="186" height="14" rx="3" fill="#e2d6c0"/>
+        <path d="M168 164Q190 174 212 164T256 164T300 164T344 164" fill="none" stroke="#2f5a3a" stroke-width="6" stroke-linecap="round"/>${garland}
+        <rect x="180" y="118" width="9" height="30" rx="2" fill="#f4ead6"/><path d="M184.5 106c-4 5-3 9 0 10 3-1 4-5 0-10Z" fill="#ffcf6a"/>
+        <rect x="326" y="118" width="9" height="30" rx="2" fill="#f4ead6"/><path d="M330.5 106c-4 5-3 9 0 10 3-1 4-5 0-10Z" fill="#ffcf6a"/>
+        <use href="#crownS" x="236" y="116" width="42" height="32"/>
+        <rect x="158" y="340" width="198" height="14" rx="3" fill="#b9aa8e"/>
+      </g>
+      <g>
+        <path d="M12 392V262C12 238 28 224 50 224H96C118 224 134 238 134 262V392Z" fill="#5c1422"/>
+        <path d="M38 234H108L102 326H44Z" fill="url(#tartan)"/>
+        <rect x="26" y="318" width="94" height="40" rx="8" fill="#7a1c2e"/>
+        <rect x="4" y="300" width="30" height="92" rx="12" fill="#6d1828"/><rect x="112" y="300" width="30" height="92" rx="12" fill="#6d1828"/>
+      </g>
+      <g class="tap" id="mugT">
+        <ellipse cx="121" cy="334" rx="31" ry="6" fill="#3a2418"/><rect x="117" y="337" width="8" height="52" fill="#3a2418"/><ellipse cx="121" cy="390" rx="20" ry="4" fill="#2a1a12"/>
+        <g class="steam" fill="none" stroke="rgba(255,255,255,.75)" stroke-width="2" stroke-linecap="round"><path d="M112 290c-4-6 4-10 0-16"/><path d="M121 286c-4-6 4-10 0-16"/><path d="M130 290c-4-6 4-10 0-16"/></g>
+        <path d="M136 306a7 7 0 0 1 0 14" fill="none" stroke="#f3ecdf" stroke-width="4"/>
+        <path d="M106 300h30v24a8 8 0 0 1-8 8h-14a8 8 0 0 1-8-8Z" fill="#f3ecdf"/>
+        <ellipse cx="121" cy="300" rx="15" ry="3.5" fill="#6b3b22"/>
+        <rect class="mallow" x="110" y="295" width="7" height="5" rx="1.5" fill="#fff"/><rect class="mallow" x="119" y="294" width="7" height="5" rx="1.5" fill="#fdf1f4"/><rect class="mallow" x="127" y="296" width="6" height="5" rx="1.5" fill="#fff"/>
+        <text x="121" y="322" text-anchor="middle" font-family="IM Fell English SC, serif" font-size="13" fill="#7d1e2c">J</text>
+        <circle cx="121" cy="312" r="30" fill="transparent"/>
+      </g>
+      <rect class="warm" width="360" height="400" rx="18" fill="url(#warmG)" pointer-events="none"/>
+      <rect class="dim" width="360" height="400" rx="18" fill="#04081a" opacity=".5" pointer-events="none"/>`;
+  })();
+  let fireLit = false, sipped = false;
+  $("#room").addEventListener("click", (e) => {
+    const room = $("#room");
+    if (!fireLit && e.target.closest("#fireT")){
+      fireLit = true; room.classList.add("lit");
+      sfx.whoosh(); sfx.crackle(true);
+      $("#ins8").innerHTML = "There. Now it's properly cozy. <b>Tap the hot chocolate.</b>";
+    } else if (!fireLit && e.target.closest("#mugT")){
+      $("#ins8").innerHTML = "Fire first, Your Highness. <b>Tap the fireplace.</b>";
+    } else if (fireLit && !sipped && e.target.closest("#mugT")){
+      sipped = true; room.classList.add("sipped");
+      sfx.bloop();
+      $("#ins8").innerHTML = "Extra marshmallows. Royal standard.";
+      setTimeout(finale, 2600);
+    }
+  });
+  enter[8] = () => { if (fireLit) sfx.crackle(true); if (sipped && !finished.has(N - 1)) setTimeout(finale, 1500); };
+  leave[8] = () => sfx.crackle(false);
+  function finale(){
+    if (cur !== N - 1) return;
+    finished.add(N - 1);
+    bars.forEach((b) => b.classList.add("done"));
+    $("#back").classList.remove("can");
+    $("#warrant").classList.add("in");
+    sfx.fanfare(true);
+    setTimeout(() => confetti($("#deck"), 40, "30%"), 700);
+  }
+  $("#again").addEventListener("click", () => location.reload());
+
+  /* ============================================================ music: Greensleeves, rendered once to a WAV */
+  const NOTE = (n) => {
+    const m = /^([A-G])(#?)(\d)$/.exec(n);
+    const st = { C: 0, D: 2, E: 4, F: 5, G: 7, A: 9, B: 11 }[m[1]] + (m[2] ? 1 : 0);
+    return 440 * Math.pow(2, (12 * (+m[3] + 1) + st - 69) / 12);
+  };
+  const MEL = "A4:1|C5:2 D5:1|E5:1.5 F5:.5 E5:1|D5:2 B4:1|G4:1.5 A4:.5 B4:1|C5:2 A4:1|A4:1.5 G#4:.5 A4:1|B4:2 G#4:1|E4:2 A4:1|C5:2 D5:1|E5:1.5 F5:.5 E5:1|D5:2 B4:1|G4:1.5 A4:.5 B4:1|C5:1.5 B4:.5 A4:1|G#4:1.5 F#4:.5 G#4:1|A4:3|A4:3|G5:3|G5:1.5 F#5:.5 E5:1|D5:2 B4:1|G4:1.5 A4:.5 B4:1|C5:2 A4:1|A4:1.5 G#4:.5 A4:1|B4:2 G#4:1|E4:3|G5:3|G5:1.5 F#5:.5 E5:1|D5:2 B4:1|G4:1.5 A4:.5 B4:1|C5:1.5 B4:.5 A4:1|G#4:1.5 F#4:.5 G#4:1|A4:3|A4:2";
+  const CH = "Am C G Em Am Dm E E Am C G Em Am E Am Am C Em G Em Am Dm E E C Em G Em Am E Am Am".split(" ");
+  const CHORD = { Am: ["A2", "C4", "E4"], C: ["C3", "E4", "G4"], G: ["G2", "B3", "D4"], Em: ["E2", "G3", "B3"], Dm: ["D3", "F3", "A3"], E: ["E2", "G#3", "B3"] };
+  const BEAT = .52;
+
+  function wav(d, sr, k){
+    const n = d.length, b = new ArrayBuffer(44 + n * 2), v = new DataView(b);
+    const w = (o, s) => { for (let i = 0; i < s.length; i++) v.setUint8(o + i, s.charCodeAt(i)); };
+    w(0, "RIFF"); v.setUint32(4, 36 + n * 2, true); w(8, "WAVE"); w(12, "fmt ");
+    v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 1, true); v.setUint32(24, sr, true);
+    v.setUint32(28, sr * 2, true); v.setUint16(32, 2, true); v.setUint16(34, 16, true); w(36, "data"); v.setUint32(40, n * 2, true);
+    for (let i = 0; i < n; i++) v.setInt16(44 + i * 2, Math.max(-1, Math.min(1, d[i] * k)) * 32767, true);
+    return new Blob([b], { type: "audio/wav" });
+  }
+  function impulse(c, sec){
+    const n = Math.floor(c.sampleRate * sec), b = c.createBuffer(1, n, c.sampleRate), d = b.getChannelData(0);
+    let lp = 0;
+    for (let i = 0; i < n; i++){ lp = lp * .6 + (Math.random() * 2 - 1) * .4; d[i] = lp * Math.pow(1 - i / n, 2.6); }
+    return b;
+  }
+  function mbox(c, out, f, t, v){
+    const long = f < 330 ? 1.8 : 1;
+    [[1, 1, 1.5], [2, .26, .6], [3, .07, .3], [6.27, .045, .1]].forEach(([m, a, d]) => {
+      if (f * m > 9000) return;
+      const o = c.createOscillator(), g = c.createGain();
+      o.frequency.value = f * m;
+      g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(v * a, t + .005); g.gain.exponentialRampToValueAtTime(.0001, t + d * long);
+      o.connect(g); g.connect(out); o.start(t); o.stop(t + d * long + .05);
+    });
+  }
+  function harp(c, out, f, t, v){
+    const o = c.createOscillator(), g = c.createGain(), lp = c.createBiquadFilter();
+    o.type = "triangle"; o.frequency.value = f; lp.type = "lowpass"; lp.frequency.value = 900;
+    g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(v, t + .008); g.gain.exponentialRampToValueAtTime(.0001, t + 1.9);
+    o.connect(lp); lp.connect(g); g.connect(out); o.start(t); o.stop(t + 2);
+  }
+  function pad(c, out, fs, t, dur, v){
+    fs.forEach((f) => [-5, 5].forEach((det) => {
+      const o = c.createOscillator(), g = c.createGain(), lp = c.createBiquadFilter();
+      o.type = "sawtooth"; o.frequency.value = f; o.detune.value = det; lp.type = "lowpass"; lp.frequency.value = 650;
+      g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(v, t + .45); g.gain.setValueAtTime(v, t + dur - .1); g.gain.linearRampToValueAtTime(0, t + dur + .5);
+      o.connect(lp); lp.connect(g); g.connect(out); o.start(t); o.stop(t + dur + .6);
+    }));
+  }
+  async function renderMusic(){
+    const C = window.OfflineAudioContext || window.webkitOfflineAudioContext;
+    if (!C) return null;
+    const sr = 44100, L = 96 * BEAT, c = new C(1, Math.ceil(sr * (L + 3)), sr);
+    const bus = c.createGain(), dry = c.createGain(), wet = c.createGain(), rev = c.createConvolver();
+    dry.gain.value = .85; wet.gain.value = .5; rev.buffer = impulse(c, 2.6);
+    bus.connect(dry); bus.connect(rev); rev.connect(wet); dry.connect(c.destination); wet.connect(c.destination);
+    let t = 0;
+    MEL.split("|").forEach((bar) => bar.split(" ").forEach((tok) => { const [n, b] = tok.split(":"); mbox(c, bus, NOTE(n), t, .3); t += +b * BEAT; }));
+    CH.forEach((ch, k) => {
+      const t0 = (1 + 3 * k) * BEAT, [r, a, b] = CHORD[ch].map(NOTE);
+      harp(c, bus, r, t0, .2);
+      mbox(c, bus, a, t0 + BEAT, .07); mbox(c, bus, b, t0 + BEAT, .06);
+      mbox(c, bus, a, t0 + 2 * BEAT, .055); mbox(c, bus, b, t0 + 2 * BEAT, .05);
+      pad(c, bus, [r * 2, r * 3], t0, 3 * BEAT, .012);
+    });
+    const done = new Promise((res) => { c.oncomplete = (e) => res(e.renderedBuffer); });
+    const p = c.startRendering();
+    const buf = await (p && p.then ? p : done);
+    const d = buf.getChannelData(0), n = Math.round(L * sr), loop = new Float32Array(n);
+    loop.set(d.subarray(0, n));
+    for (let i = n; i < d.length; i++) loop[i - n] += d[i];
+    let peak = 0;
+    for (let i = 0; i < n; i++) peak = Math.max(peak, Math.abs(loop[i]));
+    return wav(loop, sr, peak ? .5 / peak : 1);
+  }
+
+  const music = new Audio();
+  music.loop = true; music.preload = "auto"; music.setAttribute("playsinline", "");
+  let musicReady = false, wantMusic = false;
+  if (!MUTE) renderMusic().then((blob) => {
+    if (!blob) return;
+    music.src = URL.createObjectURL(blob);
+    musicReady = true;
+    if (wantMusic) playMusic();
+  }).catch(() => {});
+  function playMusic(){
+    wantMusic = true;
+    $("#mus").classList.add("on");
+    if (!musicReady) return;
+    const p = music.play();
+    if (p && p.catch) p.catch(() => {});
+  }
+  function pauseMusic(){ wantMusic = false; music.pause(); $("#mus").classList.remove("on"); }
+  $("#mus").addEventListener("click", () => (wantMusic ? pauseMusic() : playMusic()));
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden) music.pause();
+    else if (wantMusic && musicReady) music.play().catch(() => {});
+  });
+  function audioStart(){
+    if (MUTE) return;
+    try { if (navigator.audioSession) navigator.audioSession.type = "playback"; } catch (e) {}
+    ac();
+    if (!musicReady){ music.src = URL.createObjectURL(wav(new Float32Array(4410), 44100, 1)); music.play().catch(() => {}); }
+    playMusic();
+  }
+
+  /* ============================================================ sound effects */
+  let AC = null, master = null, noiseBuf = null, gallopT = 0, crackleT = 0;
+  function ac(){
+    if (MUTE) return null;
+    if (!AC){
+      const C = window.AudioContext || window.webkitAudioContext;
+      if (!C) return null;
+      AC = new C(); master = AC.createGain(); master.gain.value = .8; master.connect(AC.destination);
+      noiseBuf = AC.createBuffer(1, AC.sampleRate * 2, AC.sampleRate);
+      const d = noiseBuf.getChannelData(0);
+      for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+    }
+    if (AC.state === "suspended") AC.resume();
+    return AC;
+  }
+  function tone(f, t, dur, { type = "sine", vol = .1, att = .005, to = 0 } = {}){
+    const o = AC.createOscillator(), g = AC.createGain();
+    o.type = type; o.frequency.setValueAtTime(f, t);
+    if (to) o.frequency.exponentialRampToValueAtTime(to, t + dur);
+    g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(vol, t + att); g.gain.exponentialRampToValueAtTime(.0001, t + dur);
+    o.connect(g); g.connect(master); o.start(t); o.stop(t + dur + .05);
+  }
+  function noise(t, dur, { type = "bandpass", f = 1000, to = 0, q = 1, vol = .1, att = .01 } = {}){
+    const s = AC.createBufferSource(), fl = AC.createBiquadFilter(), g = AC.createGain();
+    s.buffer = noiseBuf; fl.type = type; fl.frequency.setValueAtTime(f, t);
+    if (to) fl.frequency.exponentialRampToValueAtTime(to, t + dur);
+    fl.Q.value = q;
+    g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(vol, t + att); g.gain.exponentialRampToValueAtTime(.0001, t + dur);
+    s.connect(fl); fl.connect(g); g.connect(master); s.start(t, Math.random()); s.stop(t + dur + .05);
+  }
+  const bell = (f, t, vol = .07) => [[1, 1, 1.4], [2.76, .35, .5], [5.4, .15, .25]].forEach(([m, a, d]) => tone(f * m, t, d, { vol: vol * a, att: .003 }));
+  function brass(f, t, dur, vol){
+    [-6, 6].forEach((det) => {
+      const o = AC.createOscillator(), fl = AC.createBiquadFilter(), g = AC.createGain();
+      o.type = "sawtooth"; o.frequency.value = f; o.detune.value = det; fl.type = "lowpass";
+      fl.frequency.setValueAtTime(400, t); fl.frequency.linearRampToValueAtTime(2600, t + .05); fl.frequency.exponentialRampToValueAtTime(1000, t + dur);
+      g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(vol, t + .03); g.gain.setValueAtTime(vol * .8, t + dur * .7); g.gain.exponentialRampToValueAtTime(.0001, t + dur + .15);
+      o.connect(fl); fl.connect(g); g.connect(master); o.start(t); o.stop(t + dur + .2);
+    });
+  }
+  const PENTA = [523.25, 587.33, 659.25, 783.99, 880, 1046.5, 1174.66, 1318.5];
+  const sfx = {
+    tick(){ if (ac()) tone(1500, AC.currentTime, .05, { vol: .035 }); },
+    whoosh(){ if (ac()) noise(AC.currentTime, 1.1, { f: 300, to: 2400, q: .8, vol: .09, att: .4 }); },
+    fanfare(soft){
+      if (!ac()) return;
+      const t = AC.currentTime + .05, v = soft ? .03 : .05;
+      [[523.25, 0, .15], [523.25, .17, .15], [523.25, .34, .15], [783.99, .51, .8]].forEach(([f, d, l]) => brass(f, t + d, l, v));
+      brass(659.25, t + .51, .8, v * .6); brass(392, t + .51, .8, v * .6);
+    },
+    toot(i){ if (!ac()) return; const t = AC.currentTime; brass(PENTA[i % 8] / 2, t, .32, .045); bell(PENTA[i % 8] * 2, t + .12, .03); },
+    crack(){ if (!ac()) return; const t = AC.currentTime; noise(t, .12, { type: "highpass", f: 2500, vol: .25, att: .002 }); tone(140, t, .25, { vol: .14, to: 60 }); },
+    unroll(){ if (ac()) noise(AC.currentTime, 1.8, { f: 1800, to: 900, q: .6, vol: .05, att: .3 }); },
+    chime(i){ if (!ac()) return; const t = AC.currentTime; bell(PENTA[i % 8], t); bell(PENTA[(i + 2) % 8], t + .09, .05); },
+    twinkle(i){ if (!ac()) return; const t = AC.currentTime; [0, 1, 2].forEach((k) => bell(PENTA[(i + k * 2) % 8] * 2, t + k * .07, .035)); },
+    sparkle(){ if (!ac()) return; const t = AC.currentTime; PENTA.forEach((f, k) => bell(f * 2, t + k * .06, .03)); },
+    swish(){ if (ac()) noise(AC.currentTime, .25, { f: 800, to: 3500, q: 1.2, vol: .12, att: .05 }); },
+    thwack(){ if (!ac()) return; const t = AC.currentTime; noise(t, .06, { type: "highpass", f: 1500, vol: .3, att: .001 }); tone(220, t, .15, { vol: .2, to: 90 }); },
+    cheer(){ sfx.fanfare(); setTimeout(sfx.sparkle, 700); },
+    bloop(){ if (!ac()) return; const t = AC.currentTime; tone(500, t, .18, { vol: .08, to: 260 }); tone(700, t + .2, .14, { vol: .05, to: 380 }); },
+    scratch(){ if (!ac()) return; const t = AC.currentTime; for (let k = 0; k < 14; k++) noise(t + k * .24 + Math.random() * .08, .09, { type: "highpass", f: 3000, vol: .028, att: .01 }); },
+    gallop(on){
+      clearInterval(gallopT);
+      if (!on || !ac()) return;
+      gallopT = setInterval(() => {
+        const t = AC.currentTime;
+        [0, .09, .18].forEach((d) => { noise(t + d, .07, { type: "lowpass", f: 500, vol: .12, att: .002 }); tone(110, t + d, .07, { vol: .05, to: 70 }); });
+      }, 440);
+    },
+    crackle(on){
+      clearInterval(crackleT);
+      if (!on || !ac()) return;
+      crackleT = setInterval(() => {
+        const t = AC.currentTime, n = 1 + (Math.random() * 3 | 0);
+        for (let i = 0; i < n; i++) noise(t + Math.random() * .25, rnd(.01, .04), { type: "highpass", f: rnd(1500, 4000), vol: rnd(.02, .08), att: .001 });
+      }, 260);
+    },
+  };
+})();
+</script>
+</body>
+</html>
